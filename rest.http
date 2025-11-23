@@ -1,0 +1,29 @@
+@prefix = http://localhost:9876/api
+{{
+  exports.defaultHeaders = {
+    'Content-Type': 'application/json'
+  };
+}}
+
+### hello
+GET {{prefix}}/
+
+### user.create
+POST {{prefix}}/user/create
+Content-Type: application/json
+{
+  "name": "peter",
+  "email": "peter@gmail.com",
+  "password": "123456",
+  "code": "1234"
+}
+
+### book.create
+POST {{prefix}}/book/create
+Content-Type: application/json
+{
+  "name": "抓落叶"
+}
+
+### book.get.paging
+GET {{prefix}}/book?limit=3&offset=3
