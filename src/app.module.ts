@@ -3,13 +3,15 @@ import { HttpModule } from '@nestjs/axios'
 import { CacheModule } from '@nestjs/cache-manager'
 import { HttpStatus, MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
 import { ScheduleModule } from '@nestjs/schedule'
+import { ThrottlerModule } from '@nestjs/throttler'
 import { LoggerModule, Params } from 'nestjs-pino'
 import pino from 'pino'
 import { DefaultFilter } from './aspects/filters/default/default.filter'
 import { HttpFilter } from './aspects/filters/http/http.filter'
 import { ValidationFilter } from './aspects/filters/validation/validation.filter'
+import { ThrottlerGuard } from './aspects/guards/throttler.guard'
 import { FormatterInterceptor } from './aspects/interceptors/formatter/formatter.interceptor'
 import { DbModule } from './db/db.module'
 import { FeaturesModule } from './features/features.module'
@@ -95,6 +97,24 @@ import { ServicesModule } from './services/services.module'
     ServicesModule,
     FeaturesModule,
     DbModule,
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        throttlers: [
+          {
+            name: 'default',
+            ttl: config.get('THROTTLE_TTL', 60000), // 60秒
+            limit: config.get('THROTTLE_LIMIT', 60), // 100次请求
+          },
+          {
+            name: 'short',
+            ttl: config.get('SHORT_THROTTLE_TTL', 20),
+            limit: config.get('SHORT_THROTTLE_LIMIT', 10),
+          },
+        ],
+      }),
+    }),
   ],
 
   providers: [
@@ -133,6 +153,13 @@ import { ServicesModule } from './services/services.module'
     {
       provide: APP_FILTER,
       useClass: ValidationFilter,
+    },
+    // #endregion
+
+    // #region Guards
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
     // #endregion
   ],

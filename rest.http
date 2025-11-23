@@ -1,12 +1,12 @@
-@prefix = http://localhost:9876/api
+@prefix = http://localhost:9872/api
 {{
   exports.defaultHeaders = {
     'Content-Type': 'application/json'
   };
 }}
 
-### hello
-GET {{prefix}}/
+### health.get
+GET {{prefix}}/health
 
 ### user.create
 POST {{prefix}}/user/create
