@@ -26,7 +26,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:sync": "dotenv -- npx mikro-orm schema:update --run --context demo",
-    "yac": "node_modules/.bin/httpyac -e development -o body ./rest.http"
+    "yac": "node_modules/.bin/httpyac -e development -o body ./rest.http",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fastify/cookie": "11.0.2",
@@ -57,6 +58,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^6.0.0",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@mikro-orm/cli": "6.6.0",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
@@ -71,6 +74,7 @@
     "eslint": "^9.38.0",
     "globals": "^16.0.0",
     "httpyac": "^6.16.7",
+    "husky": "^9.1.7",
     "jest": "^30.0.0",
     "oxlint": "^1.23.0",
     "prettier": "^3.4.2",
