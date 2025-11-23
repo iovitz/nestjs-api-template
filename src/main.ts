@@ -29,7 +29,7 @@ async function bootstrap() {
   idService = app.get(IdService)
 
   // 注册cookie插件
-  await app.register(fastifyCookie, {
+  await app.register(fastifyCookie as any, {
     secret: configService.getOrThrow('COOKIE_SECRET') as string,
   })
 
