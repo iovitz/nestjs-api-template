@@ -18,7 +18,7 @@ export class FormatterInterceptor implements NestInterceptor {
     const skipFormat = Reflect.getMetadata(SKIP_RESPONSE_FORMAT_KEY, handler)
     return next.handle().pipe(
       map((data) => {
-        if (skipFormat || res.getHeader('content-type')) {
+        if (skipFormat || res.headers['content-type']) {
           this.logger.log(`Skip Response Format`, {
           })
           return data
