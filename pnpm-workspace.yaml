@@ -1,0 +1,21 @@
+packages:
+  - '.'
+
+# 配置npm镜像源为官方源（解决版本同步问题）
+registry: https://registry.npmjs.org/
+
+# 安装包时保存精确版本号（避免自动升级到新版本）
+saveExact: true
+
+# 严格检查Node.js和npm版本是否符合项目要求
+engineStrict: true
+
+# 禁止使用^、~等版本范围前缀，强制使用精确版本
+savePrefix: ""
+
+# 严格模式，任何版本冲突都会报错
+strictPeerDependencies: true
+
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@swc/core'
