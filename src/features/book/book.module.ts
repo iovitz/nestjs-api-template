@@ -1,6 +1,6 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs'
 import { Module } from '@nestjs/common'
-import { Book } from 'src/db/entities/book.entity'
+import { Book } from 'src/global/db/entities/book.entity'
 import { BookController } from './book.controller'
 import { BookService } from './book.service'
 

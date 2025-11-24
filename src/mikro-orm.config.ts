@@ -27,8 +27,8 @@ export default function getMikroORMConfig(_context: string, options?: DBOptions)
     password: options?.password ?? process.env.DB_PASSWORD, // 密码
 
     // 2. 实体配置
-    entities: ['dist/db/entities/*.entity.js'], // 编译后的实体路径（TS 项目必填，需与 tsconfig 输出目录一致）
-    entitiesTs: ['src/db/entities/*.entity.ts'], // 源码实体路径（用于 CLI 命令如迁移、生成实体）
+    entities: ['dist/**/entities/*.entity.js'], // 编译后的实体路径（TS 项目必填，需与 tsconfig 输出目录一致）
+    entitiesTs: ['src/**/entities/*.entity.ts'], // 源码实体路径（用于 CLI 命令如迁移、生成实体）
   })
   return config
 }

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/platform-fastify'
 import { Logger } from 'nestjs-pino'
 import { AppModule } from './app.module'
-import { IdService } from './services/id/id.service'
+import { IdService } from './global/id/id.service'
 
 async function bootstrap() {
   let idService: IdService

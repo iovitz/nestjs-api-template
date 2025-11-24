@@ -3,8 +3,8 @@ import { EntityManager, EntityRepository } from '@mikro-orm/postgresql'
 import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import argon2 from 'argon2'
 import { omit } from 'es-toolkit'
-import { User } from 'src/db/entities/user.entity'
-import { IdService } from 'src/services/id/id.service'
+import { User } from 'src/global/db/entities/user.entity'
+import { IdService } from 'src/global/id/id.service'
 import { LoginDto, RegisterDto } from './user.dto'
 
 @Injectable()

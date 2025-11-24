@@ -2,7 +2,7 @@ import { InjectRepository } from '@mikro-orm/nestjs'
 import { EntityManager, EntityRepository, FilterQuery } from '@mikro-orm/postgresql'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { Book } from 'src/db/entities/book.entity'
+import { Book } from 'src/global/db/entities/book.entity'
 import { DaoService } from 'src/shared/service/dao.service'
 
 @Injectable()

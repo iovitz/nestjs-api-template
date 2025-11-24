@@ -1,7 +1,7 @@
 import { EntityManager, EntityRepository, FilterQuery, FindAllOptions, LoadStrategy, OrderDefinition, RequiredEntityData, wrap } from '@mikro-orm/postgresql'
 import { ConfigService } from '@nestjs/config'
 import { Snowflake } from '@sapphire/snowflake'
-import { EntityBase } from 'src/db/entities/entity-base'
+import { EntityBase } from 'src/global/db/entities/entity-base'
 
 export abstract class DaoService<T extends EntityBase, E extends EntityRepository<T> = EntityRepository<T>> {
   readonly abstract entity: E
