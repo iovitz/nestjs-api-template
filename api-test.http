@@ -5,25 +5,44 @@
   };
 }}
 
-### health.get
-GET {{prefix}}/health
-
-### user.create
-POST {{prefix}}/user/create
-Content-Type: application/json
-{
-  "name": "peter",
-  "email": "peter@gmail.com",
-  "password": "123456",
-  "code": "1234"
-}
-
 ### book.create
+@name = {{$random.alphabetic(10)}}
 POST {{prefix}}/book/create
 Content-Type: application/json
 {
-  "name": "抓落叶"
+  "name": "抓落叶-{{name}}"
 }
 
 ### book.get.paging
 GET {{prefix}}/book?limit=3&offset=3
+
+### user.register.success
+# 用户测试
+@name = {{$random.alphabetic(10)}}
+POST {{prefix}}/user/register
+Content-Type: application/json
+
+{
+  "name": "{{name}}",
+  "email": "{{name}}@gmail.com",
+  "password": "123456",
+  "code": "0000"
+}
+
+### user.login.success
+# 用户登录
+POST {{prefix}}/user/login
+Content-Type: application/json
+
+{
+  "email": "test@gmail.com",
+  "password": "123456",
+  "code": "0000"
+}
+
+### user.profile.get
+# 获取用户个人信息
+GET {{prefix}}/user/profile
+
+### health.get
+GET {{prefix}}/health
