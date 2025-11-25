@@ -1,6 +1,6 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UnauthorizedException, UseGuards } from '@nestjs/common'
 import { AuthGuard } from 'src/aspects/guards/auth.guard'
+import { HttpMessageService } from 'src/global/http-message/http-message.service'
 import { LoginDto, RegisterDto } from './user.dto'
 import { UserService } from './user.service'
 
@@ -8,7 +8,7 @@ import { UserService } from './user.service'
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly configService: ConfigService,
+    private readonly httpMessageService: HttpMessageService,
   ) {}
 
   @Post('register')
@@ -24,16 +24,11 @@ export class UserController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() body: LoginDto, @Res({ passthrough: true }) res: FastifyReply) {
+  async login(@Body() body: LoginDto) {
     const result = await this.userService.login(body)
 
-    // 将session写入cookie
-    res.cookie('session', result.sessionId, {
-      httpOnly: true,
-      secure: this.configService.get('NODE_ENV') === 'prod',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000, // 24小时
-    })
+    // 使用CookieService设置会话Cookie
+    this.httpMessageService.setCookie('session', result.sessionId)
 
     return {
       message: '登录成功',
@@ -45,8 +40,9 @@ export class UserController {
 
   @Get('profile')
   @UseGuards(AuthGuard)
-  async getProfile(@Req() request: FastifyRequest) {
-    const sessionId = request.cookies.session
+  async getProfile() {
+    // 使用CookieService获取会话Cookie
+    const sessionId = this.httpMessageService.getCookie('session')
     if (!sessionId) {
       throw new UnauthorizedException()
     }

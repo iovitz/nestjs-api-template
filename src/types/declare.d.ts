@@ -5,6 +5,7 @@ declare global {
     user?: {
       id: string
     }
+    replyRef: FastifyReplyType
   }
   type FastifyReply = FastifyReplyType
 }

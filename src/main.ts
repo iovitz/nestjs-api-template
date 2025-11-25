@@ -22,6 +22,12 @@ async function bootstrap() {
       bufferLogs: true,
     },
   )
+  const fastifyInstance: any = app.getHttpAdapter().getInstance()
+  // HACK: 把 Reply 挂到 Request 上
+  fastifyInstance.addHook('preHandler', (req: FastifyRequest, reply: FastifyReply, done: () => void) => {
+    req.replyRef = reply
+    done()
+  })
 
   const logger = app.get(Logger)
   app.useLogger(logger)

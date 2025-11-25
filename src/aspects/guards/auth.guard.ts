@@ -1,18 +1,20 @@
 import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import Redis from 'ioredis'
+import { HttpMessageService } from 'src/global/http-message/http-message.service'
 import { REDIS_CLIENT } from 'src/global/redis/redis.module'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     @Inject(REDIS_CLIENT) private readonly redisClient: Redis,
+    private readonly httpMessageService: HttpMessageService,
   ) {}
 
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
     const request = context.switchToHttp().getRequest<FastifyRequest>()
-    const sessionId = request.cookies?.session
+    const sessionId = this.httpMessageService.getCookie('session')
 
     if (!sessionId) {
       throw new UnauthorizedException('请先登录')
