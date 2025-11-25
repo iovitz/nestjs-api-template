@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common'
+import { Body, Controller, Get, Inject, Post, Query, UseGuards } from '@nestjs/common'
 import Redis from 'ioredis'
+import { AuthGuard } from 'src/aspects/guards/auth.guard'
 import { REDIS_CLIENT } from 'src/global/redis/redis.module'
 import { AddBookDto, GetBookDto } from './book.dto'
 import { BookService } from './book.service'
@@ -19,6 +20,7 @@ export class BookController {
   }
 
   @Post('create')
+  @UseGuards(AuthGuard)
   async addBook(@Body() body: AddBookDto) {
     const newBook = await this.bookService.addBook(body.name)
 

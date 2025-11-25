@@ -41,9 +41,6 @@ Content-Type: application/json
   "code": "0000"
 }
 
-### user.profile.get
-# 获取用户个人信息
-GET {{prefix}}/user/profile
 
 ### health.get
 # 健康检查

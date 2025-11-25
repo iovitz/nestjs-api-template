@@ -1,10 +1,12 @@
 import { InjectRepository } from '@mikro-orm/nestjs'
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql'
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
+import { ConflictException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import argon2 from 'argon2'
 import { omit } from 'es-toolkit'
+import Redis from 'ioredis'
 import { User } from 'src/global/db/entities/user.entity'
 import { IdService } from 'src/global/id/id.service'
+import { REDIS_CLIENT } from 'src/global/redis/redis.module'
 import { LoginDto, RegisterDto } from './user.dto'
 
 @Injectable()
@@ -13,6 +15,7 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: EntityRepository<User>,
     private readonly em: EntityManager,
     private readonly idService: IdService,
+    @Inject(REDIS_CLIENT) private readonly redisClient: Redis,
   ) {}
 
   async register({ name, email, password }: RegisterDto) {
@@ -66,7 +69,23 @@ export class UserService {
     user.lastLoginAt = new Date()
     await this.em.persistAndFlush(user)
 
-    return this.sanitizeUserData(user)
+    // 生成session并写入Redis
+    const sessionId = this.generateSessionId()
+    const sessionData = {
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+      loginAt: new Date().toISOString(),
+    }
+
+    // 将session写入Redis，设置24小时过期时间
+    await this.redisClient.setex(`session:${sessionId}`, 86400, JSON.stringify(sessionData))
+
+    // 返回用户数据和sessionId
+    return {
+      user: this.sanitizeUserData(user),
+      sessionId,
+    }
   }
 
   async findById(id: string) {
@@ -89,5 +108,29 @@ export class UserService {
 
   async sanitizeUserData(user: User) {
     return omit(user, ['password', 'createdAt'])
+  }
+
+  /**
+   * 获取session数据
+   */
+  async getSessionData(sessionId: string) {
+    const key = `session:${sessionId}`
+    const data = await this.redisClient.get(key)
+    if (!data)
+      return null
+
+    try {
+      return JSON.parse(data)
+    }
+    catch {
+      return null
+    }
+  }
+
+  /**
+   * 生成session ID
+   */
+  private generateSessionId(): string {
+    return this.idService.genSnowflakeId()
   }
 }

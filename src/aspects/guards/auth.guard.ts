@@ -1,18 +1,46 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
-import { Observable } from 'rxjs'
+import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import Redis from 'ioredis'
+import { REDIS_CLIENT } from 'src/global/redis/redis.module'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest()
-    const session = request.session
+  constructor(
+    @Inject(REDIS_CLIENT) private readonly redisClient: Redis,
+  ) {}
 
-    if (!session || !session.user) {
+  async canActivate(
+    context: ExecutionContext,
+  ): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<FastifyRequest>()
+    const sessionId = request.cookies?.session
+
+    if (!sessionId) {
       throw new UnauthorizedException('请先登录')
     }
 
-    return true
+    // 从Redis获取session数据
+    const key = `session:${sessionId}`
+    const sessionData = await this.redisClient.get(key)
+
+    if (!sessionData) {
+      throw new UnauthorizedException('会话已过期，请重新登录')
+    }
+
+    try {
+      const session = JSON.parse(sessionData)
+      if (!session.userId) {
+        throw new UnauthorizedException('会话数据无效')
+      }
+
+      // 将用户信息附加到请求对象上，供后续使用
+      request.user = {
+        id: session.userId,
+      }
+
+      return true
+    }
+    catch {
+      throw new UnauthorizedException('会话数据格式错误')
+    }
   }
 }
