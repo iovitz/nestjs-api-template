@@ -1,4 +1,6 @@
 import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common'
+import Redis from 'ioredis'
+import { REDIS_CLIENT } from 'src/global/redis/redis.module'
 import { AddBookDto, GetBookDto } from './book.dto'
 import { BookService } from './book.service'
 
@@ -7,8 +9,12 @@ export class BookController {
   @Inject()
   bookService: BookService
 
+  @Inject(REDIS_CLIENT)
+  redisClient: Redis
+
   @Get()
-  getBooks(@Query() query: GetBookDto) {
+  async getBooks(@Query() query: GetBookDto) {
+    await this.redisClient.set('haha', Math.random().toString())
     const books = this.bookService.getBookByPaging({}, query.limit, query.offset)
     return books
   }

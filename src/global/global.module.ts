@@ -1,6 +1,5 @@
 import process from 'node:process'
 import { HttpModule } from '@nestjs/axios'
-import { CacheModule } from '@nestjs/cache-manager'
 import { Global, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ScheduleModule } from '@nestjs/schedule'
@@ -10,6 +9,7 @@ import pino from 'pino'
 import { CronjobService } from './cronjob/cronjob.service'
 import { DbModule } from './db/db.module'
 import { IdService } from './id/id.service'
+import { RedisModule } from './redis/redis.module'
 
 @Global()
 @Module({
@@ -30,15 +30,17 @@ import { IdService } from './id/id.service'
     }),
     DbModule,
     ScheduleModule.forRoot(),
-    CacheModule.registerAsync({
+    RedisModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        host: configService.get('REDIS_HOST', '127.0.0.1'),
+        port: configService.get('REDIS_PORT', 6379),
+        password: configService.get('REDIS_PASSWORD'),
+        db: configService.get('REDIS_DB', 0),
+        keyPrefix: configService.get('REDIS_KEY_PREFIX'),
+        enableOfflineQueue: configService.get('REDIS_ENABLE_OFFLINE_QUEUE', true),
+        maxRetriesPerRequest: configService.get('REDIS_MAX_RETRIES', 3),
+      }),
       inject: [ConfigService],
-      useFactory() {
-        return {
-          isGlobal: true,
-          ttl: 60 * 1000, // 改为60秒，更合理的缓存时间
-          max: 100, // 增加缓存项数量
-        }
-      },
     }),
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
