@@ -16,14 +16,13 @@ export interface RedisModuleOptions {
 export interface RedisModuleAsyncOptions {
   useFactory?: (...args: any[]) => Promise<RedisModuleOptions> | RedisModuleOptions
   inject?: any[]
-  useClass?: any
-  useExisting?: any
 }
 
 export interface RedisModuleOptionsProvider {
   createRedisOptions: () => Promise<RedisModuleOptions> | RedisModuleOptions
 }
 
+// https://github.com/redis/ioredis
 @Module({})
 export class RedisModule {
   static forRoot(options: RedisModuleOptions = {}): DynamicModule {
@@ -39,7 +38,8 @@ export class RedisModule {
           enableOfflineQueue: options.enableOfflineQueue !== false,
           maxRetriesPerRequest: options.maxRetriesPerRequest || 3,
         }
-        return new Redis(redisOptions)
+        const redis = new Redis(redisOptions)
+        return redis
       },
     }
 
@@ -52,10 +52,9 @@ export class RedisModule {
   }
 
   static forRootAsync(options: RedisModuleAsyncOptions): DynamicModule {
-    let redisProvider: Provider
-
-    if (options.useFactory) {
-      redisProvider = {
+    return {
+      module: RedisModule,
+      providers: [{
         provide: REDIS_CLIENT,
         useFactory: async (...args: any[]) => {
           const redisModuleOptions = await options.useFactory!(...args)
@@ -71,53 +70,7 @@ export class RedisModule {
           return new Redis(redisOptions)
         },
         inject: options.inject || [],
-      }
-    }
-    else if (options.useClass) {
-      redisProvider = {
-        provide: REDIS_CLIENT,
-        useFactory: async (optionsProvider: any) => {
-          const redisModuleOptions = await optionsProvider.createRedisOptions()
-          const redisOptions: RedisOptions = {
-            host: redisModuleOptions.host || '127.0.0.1',
-            port: redisModuleOptions.port || 6379,
-            password: redisModuleOptions.password || undefined,
-            db: redisModuleOptions.db || 0,
-            keyPrefix: redisModuleOptions.keyPrefix || undefined,
-            enableOfflineQueue: redisModuleOptions.enableOfflineQueue !== false,
-            maxRetriesPerRequest: redisModuleOptions.maxRetriesPerRequest || 3,
-          }
-          return new Redis(redisOptions)
-        },
-        inject: [options.useClass],
-      }
-    }
-    else if (options.useExisting) {
-      redisProvider = {
-        provide: REDIS_CLIENT,
-        useFactory: async (optionsProvider: any) => {
-          const redisModuleOptions = await optionsProvider.createRedisOptions()
-          const redisOptions: RedisOptions = {
-            host: redisModuleOptions.host || '127.0.0.1',
-            port: redisModuleOptions.port || 6379,
-            password: redisModuleOptions.password || undefined,
-            db: redisModuleOptions.db || 0,
-            keyPrefix: redisModuleOptions.keyPrefix || undefined,
-            enableOfflineQueue: redisModuleOptions.enableOfflineQueue !== false,
-            maxRetriesPerRequest: redisModuleOptions.maxRetriesPerRequest || 3,
-          }
-          return new Redis(redisOptions)
-        },
-        inject: [options.useExisting],
-      }
-    }
-    else {
-      throw new Error('Invalid configuration. Must provide useFactory, useClass or useExisting')
-    }
-
-    return {
-      module: RedisModule,
-      providers: [redisProvider],
+      }],
       exports: [REDIS_CLIENT],
       global: true,
     }

@@ -14,7 +14,6 @@ export class BookController {
 
   @Get()
   async getBooks(@Query() query: GetBookDto) {
-    await this.redisClient.set('haha', Math.random().toString())
     const books = this.bookService.getBookByPaging({}, query.limit, query.offset)
     return books
   }
