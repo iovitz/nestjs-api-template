@@ -91,7 +91,6 @@ import { RedisModule } from './redis/redis.module'
       },
     }),
     ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         throttlers: [
