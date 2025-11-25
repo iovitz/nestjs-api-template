@@ -101,7 +101,7 @@ import { RedisModule } from './redis/redis.module'
           },
           {
             name: 'short',
-            ttl: config.get('SHORT_THROTTLE_TTL', 20),
+            ttl: config.get('SHORT_THROTTLE_TTL', 20000),
             limit: config.get('SHORT_THROTTLE_LIMIT', 10),
           },
         ],
