@@ -46,6 +46,15 @@ export class HttpMessageService {
 
     this.reply.clearCookie(key, finalOptions)
   }
+
+  getHeader(name: string): string | undefined {
+    const header = this.request.headers[name]
+    return Array.isArray(header) ? header[0] : header
+  }
+
+  setHeader(name: string, value: string): void {
+    this.reply.header(name, value)
+  }
 }
 
 type CookieKeys = 'session'

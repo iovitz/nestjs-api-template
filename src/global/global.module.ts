@@ -44,14 +44,11 @@ import { RedisModule } from './redis/redis.module'
       inject: [ConfigService],
     }),
     LoggerModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
         return {
           pinoHttp: {
-            customReceivedObject(req, res) {
-              // 在这里注入LogID
-              res.setHeader('x-log-id', req.id as string)
+            customReceivedObject(req) {
               return {
                 msg: 'request in',
                 path: req.url,
