@@ -36,15 +36,11 @@ export class HttpMessageService {
 
   clearCookie(
     key: CookieKeys,
-    options: CookieOptions = {},
-  ): void {
-    const defaultOptions: CookieOptions = {
+    options: CookieOptions = {
       path: '/',
-    }
-
-    const finalOptions = { ...defaultOptions, ...options }
-
-    this.reply.clearCookie(key, finalOptions)
+    },
+  ): void {
+    this.reply.clearCookie(key, options)
   }
 
   getHeader(name: string): string | undefined {

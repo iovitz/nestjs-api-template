@@ -3,6 +3,7 @@ import { FastifyReply as FastifyReplyType, FastifyRequest as FastifyRequestType 
 declare global {
   interface AuthedUser {
     id: string
+    session: string
   }
   type FastifyRequest = FastifyRequestType & {
     user?: AuthedUser

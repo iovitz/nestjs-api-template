@@ -128,6 +128,18 @@ export class UserService {
   }
 
   /**
+   * 用户登出
+   */
+  async logout(sessionId: string) {
+    const key = `session:${sessionId}`
+
+    // 删除Redis中的session数据
+    await this.redisClient.del(key)
+
+    return true
+  }
+
+  /**
    * 生成session ID
    */
   private generateSessionId(): string {

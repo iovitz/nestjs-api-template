@@ -25,6 +25,7 @@ export class AuthGuard implements CanActivate {
     const sessionData = await this.redisClient.get(key)
 
     if (!sessionData) {
+      this.httpMessageService.clearCookie('session')
       throw new UnauthorizedException('会话已过期，请重新登录')
     }
 
@@ -37,6 +38,7 @@ export class AuthGuard implements CanActivate {
       // 将用户信息附加到请求对象上，供后续使用
       request.user = {
         id: session.userId,
+        session: sessionId,
       }
 
       return true

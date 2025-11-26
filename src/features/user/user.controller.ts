@@ -1,4 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, UnauthorizedException, UseGuards } from '@nestjs/common'
+import { CurrentUser } from 'src/aspects/decorators/context.decorator'
 import { AuthGuard } from 'src/aspects/guards/auth.guard'
 import { HttpMessageService } from 'src/global/http-message/http-message.service'
 import { LoginDto, RegisterDto } from './user.dto'
@@ -16,10 +17,7 @@ export class UserController {
   async register(@Body() body: RegisterDto) {
     const user = await this.userService.register(body)
 
-    return {
-      message: '注册成功',
-      data: user,
-    }
+    return user
   }
 
   @Post('login')
@@ -30,33 +28,32 @@ export class UserController {
     // 使用CookieService设置会话Cookie
     this.httpMessageService.setCookie('session', result.sessionId)
 
-    return {
-      message: '登录成功',
-      data: {
-        user: result.user,
-      },
-    }
+    return result.user
   }
 
   @Get('profile')
   @UseGuards(AuthGuard)
-  async getProfile() {
-    // 使用CookieService获取会话Cookie
-    const sessionId = this.httpMessageService.getCookie('session')
-    if (!sessionId) {
-      throw new UnauthorizedException()
-    }
-
+  async getProfile(@CurrentUser() currentUser: AuthedUser) {
     // 从Redis获取session数据
-    const sessionData = await this.userService.getSessionData(sessionId)
+    const sessionData = await this.userService.getSessionData(currentUser.session)
     if (!sessionData) {
       throw new Error('会话已过期')
     }
 
     const user = await this.userService.findById(sessionData.userId)
-    return {
-      message: '获取用户信息成功',
-      data: user,
-    }
+    return user
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async logout(@CurrentUser() currentUser: AuthedUser) {
+    // 调用service进行登出处理
+    await this.userService.logout(currentUser.session)
+
+    // 清除Cookie
+    this.httpMessageService.clearCookie('session')
+
+    throw new UnauthorizedException('已登出')
   }
 }
