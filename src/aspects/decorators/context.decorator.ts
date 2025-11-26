@@ -2,7 +2,7 @@ import { createParamDecorator, ExecutionContext, UnauthorizedException } from '@
 
 // 获取用户IP
 export const CurrentUser = createParamDecorator(
-  (ctx: ExecutionContext) => {
+  (_: unknown, ctx: ExecutionContext) => {
     const req = ctx.switchToHttp().getRequest<FastifyRequest>()
     const user = req.user
     if (!user) {
