@@ -25,11 +25,14 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:sync": "dotenv -- pnpx mikro-orm schema:update --run",
+    "mikro-orm": "dotenv -- mikro-orm",
+    "db:sync": "pnpm mikro-orm schema:update --run",
+    "db:migration:create": "pnpm mikro-orm migration:create",
+    "db:migration:up": "pnpm mikro-orm migration:up",
+    "db:migration:down": "pnpm mikro-orm migration:down",
     "yac": "node_modules/.bin/httpyac ./api-test.http",
     "prepare": "husky",
-    "commit": "cz",
-    "cm": "cz",
+    "cz": "cz",
     "check-versions": "node scripts/check-versions.js"
   },
   "dependencies": {
