@@ -25,11 +25,16 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:sync": "dotenv -- npx mikro-orm schema:update --run",
+    "orm": "dotenv -- mikro-orm",
+    "migration:initial": "pnpm orm migration:create --initial",
+    "migration:create": "pnpm orm migration:create",
+    "migration:up": "pnpm orm migration:up",
+    "migration:down": "pnpm orm migration:down",
+    "migration:pending": "pnpm orm migration:pending",
+    "migration:list": "pnpm orm migration:list",
     "yac": "pnpx httpyac ./api-test.http",
     "prepare": "husky",
-    "commit": "cz",
-    "cm": "cz",
+    "cz": "cz",
     "check-versions": "node scripts/check-versions.js"
   },
   "dependencies": {
@@ -64,6 +69,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "6.0.0",
+    "@mikro-orm/migrations": "6.3.0",
     "@commitlint/cli": "20.1.0",
     "@commitlint/config-conventional": "20.0.0",
     "@mikro-orm/cli": "6.3.0",
