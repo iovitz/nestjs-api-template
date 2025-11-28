@@ -22,5 +22,5 @@ export default antfu({
   },
 
 }, {
-  ignores: ['**/prisma*/*', 'node_modules/*', 'drizzle/*.json', '**/*.yaml', '**/*.md'],
+  ignores: ['**/prisma*/*', 'node_modules/*', 'dist/*', 'migrations/**/*', '**/*.yaml', '**/*.md'],
 })

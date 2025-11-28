@@ -43,14 +43,14 @@ export default function getMikroORMConfig(_context: string, options?: DBOptions)
         extensions: [require('@mikro-orm/migrations').Migrator],
         migrations: {
           tableName: 'mikro_orm_migrations', // 迁移历史记录表名
-          path: 'dist/migrations', // 编译后的迁移文件路径
-          pathTs: 'src/migrations', // TypeScript迁移文件路径
+          path: 'migrations', // 编译后的迁移文件路径
           glob: '!(*.d).{js,ts}', // 迁移文件匹配模式
+          silent: false, // 是否静默模式
           transactional: true, // 是否使用事务
-          disableForeignKeys: true, // 是否禁用外键检查
+          disableForeignKeys: false, // 是否禁用外键检查
           allOrNothing: true, // 是否全部迁移或全部不迁移
           dropTables: true, // 是否允许删除表
-          safe: false, // 是否安全模式（不删除列）
+          safe: true, // 是否安全模式（不删除列）
           snapshot: true, // 是否生成快照文件
         },
       })

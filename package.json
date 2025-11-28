@@ -27,6 +27,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "orm": "dotenv -- mikro-orm",
     "db:sync": "pnpm orm schema:update --run",
+    "migration:initial": "pnpm orm migration:create --initial",
     "migration:create": "pnpm orm migration:create",
     "migration:up": "pnpm orm migration:up",
     "migration:down": "pnpm orm migration:down",
