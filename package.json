@@ -25,7 +25,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:sync": "dotenv -- npx mikro-orm schema:update --run",
+    "db:sync": "dotenv -- pnpx mikro-orm schema:update --run",
     "yac": "node_modules/.bin/httpyac ./api-test.http",
     "prepare": "husky",
     "commit": "cz",
