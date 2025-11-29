@@ -10,6 +10,8 @@ export default antfu({
   rules: {
     'no-unused-vars': 'off',
     'unused-imports/no-unused-imports': 'error',
+    'perfectionist/sort-imports': 'off',
+    'perfectionist/sort-named-imports': 'off',
     'unused-imports/no-unused-vars': [
       'warn',
       {
