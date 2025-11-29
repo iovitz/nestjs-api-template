@@ -113,10 +113,5 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  },
-  "bun": {
-    "overrides": {
-      "postgres-interval": "4.0.1"
-    }
   }
 }
