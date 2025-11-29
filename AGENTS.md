@@ -92,6 +92,38 @@
 2. 在 `api-test.http` 中新增功能API记录
 3. 测试验证：`pnpm yac -n <api-name>`
 
+## 代码目录规范
+
+项目采用模块化设计，将功能划分为不同的模块以提高可维护性和可扩展性。
+
+### 项目结构
+
+```
+src/
+├── app.module.ts          # 应用根模块，整合全局模块和功能模块
+├── main.ts               # 应用入口文件
+├── mikro-orm.config.ts   # MikroORM配置文件
+├── aspects/              # 切面编程相关组件（装饰器、过滤器、守卫、拦截器）
+│   ├── decorators/       # 自定义装饰器
+│   ├── filters/          # 异常过滤器
+│   ├── guards/           # 守卫
+│   └── interceptors/     # 拦截器
+├── features/             # 业务功能模块
+│   ├── health/           # 健康检查模块
+│   └── user/             # 用户模块
+│   └── ...
+├── global/               # 全局共享模块和组件
+│   ├── global.module.ts  # 全局模块，提供全局可用的服务
+│   ├── cronjob/          # 定时任务服务
+│   ├── db/               # 数据库相关
+│   │   ├── db.module.ts  # 数据库模块
+│   │   └── entities/     # 所有的数据库实体类
+│   ├── http-message/     # HTTP消息服务
+│   └── id/               # ID生成服务
+└── shared/               # 共享组件
+    └── dto/              # 共享数据传输对象
+```
+
 ## 文档编写规范
 
 ### 内容标准
