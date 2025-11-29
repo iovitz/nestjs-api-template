@@ -2,13 +2,13 @@
   "name": "nestjs",
   "version": "0.0.1",
   "private": true,
-  "packageManager": "pnpm@10.0.0+",
+  "packageManager": "bun@1.0.0+",
   "description": "",
   "author": "",
   "license": "UNLICENSED",
   "engines": {
     "node": ">=20.0.0",
-    "npm": ">=10.0.0"
+    "bun": ">=1.0.0"
   },
   "engineStrict": true,
   "scripts": {
@@ -26,13 +26,13 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "orm": "dotenv -- mikro-orm",
-    "migration:initial": "pnpm orm migration:create --initial",
-    "migration:create": "pnpm orm migration:create",
-    "migration:up": "pnpm orm migration:up",
-    "migration:down": "pnpm orm migration:down",
-    "migration:pending": "pnpm orm migration:pending",
-    "migration:list": "pnpm orm migration:list",
-    "yac": "pnpx httpyac ./api-test.http",
+    "migration:initial": "bunx mikro-orm migration:create --initial",
+    "migration:create": "bunx mikro-orm migration:create",
+    "migration:up": "bunx mikro-orm migration:up",
+    "migration:down": "bunx mikro-orm migration:down",
+    "migration:pending": "bunx mikro-orm migration:pending",
+    "migration:list": "bunx mikro-orm migration:list",
+    "yac": "npx httpyac ./api-test.http",
     "prepare": "husky",
     "cz": "cz",
     "check-versions": "node scripts/check-versions.js"
@@ -114,7 +114,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-  "pnpm": {
+  "bun": {
     "overrides": {
       "postgres-interval": "4.0.1"
     }
