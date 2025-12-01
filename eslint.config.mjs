@@ -10,8 +10,11 @@ export default antfu({
   rules: {
     'no-unused-vars': 'off',
     'unused-imports/no-unused-imports': 'error',
+    // AI 优化
     'perfectionist/sort-imports': 'off',
     'perfectionist/sort-named-imports': 'off',
+    'jsonc/sort-keys': 'off',
+    'style/eol-last': 'off',
     'unused-imports/no-unused-vars': [
       'warn',
       {
