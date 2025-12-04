@@ -2,7 +2,6 @@
   "name": "nestjs",
   "version": "0.0.1",
   "private": true,
-  "packageManager": "bun@1.0.0+",
   "description": "",
   "author": "",
   "license": "UNLICENSED",
@@ -10,6 +9,7 @@
     "node": ">=20.0.0",
     "bun": ">=1.0.0"
   },
+  "packageManager": "bun@1.0.0+",
   "engineStrict": true,
   "scripts": {
     "build": "nest build",
