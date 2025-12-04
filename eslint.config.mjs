@@ -4,20 +4,19 @@ export default antfu({
   yaml: false,
   toml: false,
   markdown: false,
-  typescript: {
-    overrides: {
-      'ts/consistent-type-imports': 0,
-    },
-  },
   ignores: [
     'node_modules/*',
     'dist/*',
     'migrations/**/*',
   ],
+  typescript: {
+    overrides: {
+      'ts/consistent-type-imports': 0,
+    },
+  },
   rules: {
     'no-unused-vars': 'off',
     'unused-imports/no-unused-imports': 'error',
-    // AI 优化
     'perfectionist/sort-imports': 'off',
     'perfectionist/sort-named-imports': 'off',
     'jsonc/sort-keys': 'off',
@@ -32,5 +31,4 @@ export default antfu({
       },
     ],
   },
-
 })
