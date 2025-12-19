@@ -1,18 +1,13 @@
-import { MikroOrmModule } from '@mikro-orm/nestjs'
-import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import { User } from 'src/global/db/entities/user.entity'
-import { UserController } from './user.controller'
-import { UserService } from './user.service'
+import { MikroOrmModule } from "@mikro-orm/nestjs";
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { User } from "src/global/db/entities/user.entity";
+import { UserController } from "./user.controller";
+import { UserService } from "./user.service";
 
 @Module({
   controllers: [UserController],
-  providers: [
-    UserService,
-  ],
-  imports: [
-    MikroOrmModule.forFeature([User]),
-    ConfigModule,
-  ],
+  providers: [UserService],
+  imports: [MikroOrmModule.forFeature([User]), ConfigModule],
 })
 export class UserModule {}

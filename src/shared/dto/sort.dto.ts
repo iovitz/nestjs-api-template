@@ -1,32 +1,32 @@
-import { Transform } from 'class-transformer'
-import { IsIn, IsOptional, IsString } from 'class-validator'
+import { Transform } from "class-transformer";
+import { IsIn, IsOptional, IsString } from "class-validator";
 
 export enum SortOrder {
-  ASC = 'ASC',
-  DESC = 'DESC',
+  ASC = "ASC",
+  DESC = "DESC",
 }
 
 export class SortDto {
   @IsOptional()
   @IsString()
   @Transform(({ value }) => value?.trim())
-  sortBy?: string
+  sortBy?: string;
 
   @IsOptional()
   @IsString()
   @IsIn([SortOrder.ASC, SortOrder.DESC])
-  sortOrder?: SortOrder = SortOrder.ASC
+  sortOrder?: SortOrder = SortOrder.ASC;
 }
 
 export class SortFieldDto {
   @IsString()
-  field: string
+  field: string;
 
   @IsIn([SortOrder.ASC, SortOrder.DESC])
-  order: SortOrder
+  order: SortOrder;
 }
 
 export class MultiSortDto {
   @IsOptional()
-  sort?: SortFieldDto[]
+  sort?: SortFieldDto[];
 }

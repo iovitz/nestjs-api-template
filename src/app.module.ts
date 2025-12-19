@@ -1,18 +1,15 @@
-import { HttpStatus, MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common'
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
-import { DefaultFilter } from './aspects/filters/default/default.filter'
-import { HttpFilter } from './aspects/filters/http/http.filter'
-import { ValidationFilter } from './aspects/filters/validation/validation.filter'
-import { ThrottlerGuard } from './aspects/guards/throttler.guard'
-import { FormatterInterceptor } from './aspects/interceptors/formatter/formatter.interceptor'
-import { FeaturesModule } from './features/features.module'
-import { GlobalModule } from './global/global.module'
+import { HttpStatus, MiddlewareConsumer, Module, ValidationPipe } from "@nestjs/common";
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
+import { DefaultFilter } from "./aspects/filters/default/default.filter";
+import { HttpFilter } from "./aspects/filters/http/http.filter";
+import { ValidationFilter } from "./aspects/filters/validation/validation.filter";
+import { ThrottlerGuard } from "./aspects/guards/throttler.guard";
+import { FormatterInterceptor } from "./aspects/interceptors/formatter/formatter.interceptor";
+import { FeaturesModule } from "./features/features.module";
+import { GlobalModule } from "./global/global.module";
 
 @Module({
-  imports: [
-    GlobalModule,
-    FeaturesModule,
-  ],
+  imports: [GlobalModule, FeaturesModule],
 
   providers: [
     // #region Interceptors
@@ -30,9 +27,9 @@ import { GlobalModule } from './global/global.module'
           // 使用422作为校验失败错误码
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
           exceptionFactory(errors) {
-            return errors[0]
+            return errors[0];
           },
-        })
+        });
       },
     },
     // #endregion
@@ -60,13 +57,9 @@ import { GlobalModule } from './global/global.module'
     },
     // #endregion
   ],
-
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(
-      )
-      .forRoutes('*')
+    consumer.apply().forRoutes("*");
   }
 }

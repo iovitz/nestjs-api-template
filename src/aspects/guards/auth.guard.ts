@@ -1,7 +1,13 @@
-import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common'
-import Redis from 'ioredis'
-import { HttpMessageService } from 'src/global/http-message/http-message.service'
-import { REDIS_CLIENT } from 'src/global/redis/redis.module'
+import {
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
+import Redis from "ioredis";
+import { HttpMessageService } from "src/global/http-message/http-message.service";
+import { REDIS_CLIENT } from "src/global/redis/redis.module";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -10,41 +16,38 @@ export class AuthGuard implements CanActivate {
     private readonly httpMessageService: HttpMessageService,
   ) {}
 
-  async canActivate(
-    context: ExecutionContext,
-  ): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<FastifyRequest>()
-    const sessionId = this.httpMessageService.getCookie('session')
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<FastifyRequest>();
+    const sessionId = this.httpMessageService.getCookie("session");
 
     if (!sessionId) {
-      throw new UnauthorizedException('请先登录')
+      throw new UnauthorizedException("请先登录");
     }
 
     // 从Redis获取session数据
-    const key = `session:${sessionId}`
-    const sessionData = await this.redisClient.get(key)
+    const key = `session:${sessionId}`;
+    const sessionData = await this.redisClient.get(key);
 
     if (!sessionData) {
-      this.httpMessageService.clearCookie('session')
-      throw new UnauthorizedException('会话已过期，请重新登录')
+      this.httpMessageService.clearCookie("session");
+      throw new UnauthorizedException("会话已过期，请重新登录");
     }
 
     try {
-      const session = JSON.parse(sessionData)
+      const session = JSON.parse(sessionData);
       if (!session.userId) {
-        throw new UnauthorizedException('会话数据无效')
+        throw new UnauthorizedException("会话数据无效");
       }
 
       // 将用户信息附加到请求对象上，供后续使用
       request.user = {
         id: session.userId,
         session: sessionId,
-      }
+      };
 
-      return true
-    }
-    catch {
-      throw new UnauthorizedException('会话数据格式错误')
+      return true;
+    } catch {
+      throw new UnauthorizedException("会话数据格式错误");
     }
   }
 }

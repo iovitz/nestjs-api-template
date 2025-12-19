@@ -1,13 +1,13 @@
-import process from 'node:process'
-import { defineConfig } from '@mikro-orm/core'
-import { PostgreSqlDriver } from '@mikro-orm/postgresql'
+import process from "node:process";
+import { defineConfig } from "@mikro-orm/core";
+import { PostgreSqlDriver } from "@mikro-orm/postgresql";
 
 interface DBOptions {
-  dbName: string
-  host: string
-  port: number
-  user: string
-  password: string
+  dbName: string;
+  host: string;
+  port: number;
+  user: string;
+  password: string;
 }
 
 /**
@@ -17,7 +17,7 @@ interface DBOptions {
  * @returns DB连接诶参数
  */
 export default function getMikroORMConfig(_context: string, options?: DBOptions) {
-  const isCli = !!options
+  const isCli = !!options;
 
   // 基础配置
   const baseConfig = {
@@ -30,21 +30,20 @@ export default function getMikroORMConfig(_context: string, options?: DBOptions)
     password: options?.password ?? process.env.DB_PASSWORD, // 密码
 
     // 2. 实体配置
-    entities: ['dist/**/entities/*.entity.js'], // 编译后的实体路径（TS 项目必填，需与 tsconfig 输出目录一致）
-    entitiesTs: ['src/**/entities/*.entity.ts'], // 源码实体路径（用于 CLI 命令如迁移、生成实体）
-  }
+    entities: ["dist/**/entities/*.entity.js"], // 编译后的实体路径（TS 项目必填，需与 tsconfig 输出目录一致）
+    entitiesTs: ["src/**/entities/*.entity.ts"], // 源码实体路径（用于 CLI 命令如迁移、生成实体）
+  };
 
   // 只在Cli运行时添加迁移配置
   if (!isCli) {
     try {
       return defineConfig({
         ...baseConfig,
-        // eslint-disable-next-line ts/no-require-imports
-        extensions: [require('@mikro-orm/migrations').Migrator],
+        extensions: [require("@mikro-orm/migrations").Migrator],
         migrations: {
-          tableName: 'mikro_orm_migrations', // 迁移历史记录表名
-          path: 'migrations', // 编译后的迁移文件路径
-          glob: '!(*.d).{js,ts}', // 迁移文件匹配模式
+          tableName: "mikro_orm_migrations", // 迁移历史记录表名
+          path: "migrations", // 编译后的迁移文件路径
+          glob: "!(*.d).{js,ts}", // 迁移文件匹配模式
           silent: false, // 是否静默模式
           transactional: true, // 是否使用事务
           disableForeignKeys: false, // 是否禁用外键检查
@@ -53,13 +52,12 @@ export default function getMikroORMConfig(_context: string, options?: DBOptions)
           safe: true, // 是否安全模式（不删除列）
           snapshot: true, // 是否生成快照文件
         },
-      })
-    }
-    catch (error) {
-      console.warn('迁移模块加载失败，将以基础配置继续:', error)
-      return defineConfig(baseConfig)
+      });
+    } catch (error) {
+      console.warn("迁移模块加载失败，将以基础配置继续:", error);
+      return defineConfig(baseConfig);
     }
   }
 
-  return defineConfig(baseConfig)
+  return defineConfig(baseConfig);
 }
