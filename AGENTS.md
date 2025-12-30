@@ -84,6 +84,11 @@
 - 注意代码的鲁棒性，如果有必要可以将业务逻辑抽象成多个Service
 - 使用日志记录请求开始、结束和关键参数
 
+### 数据库设计原则
+
+- **ORM优先**: 必须使用 `MikroORM` 进行实体字段类型定义，严禁使用原生 SQL 语句
+- **文档更新**: Schema变更时必须更新[Entity 实体文档](./src/global/db/entities/README.md)
+
 ## 接口测试
 
 1. 查看现有API测试示例：`api-test.http`
