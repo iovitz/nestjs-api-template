@@ -7,16 +7,21 @@
 ## 技术栈
 
 - **框架**: NestJS 11.x
+- **编译器**: SWC (用于快速编译)
 - **ORM**: MikroORM 6.x (PostgreSQL)
 - **缓存**: Redis (ioredis)
 - **验证**: class-validator + class-transformer
 - **密码**: argon2
 - **日志**: pino + nestjs-pino
 - **服务器**: Fastify
+- **限流**: @nestjs/throttler
+- **健康检查**: @nestjs/terminus
+- **定时任务**: @nestjs/schedule
 - **测试**: Jest + Supertest
 - **格式化**: oxfmt
 - **Linting**: oxlint
 - **包管理**: Bun
+- **工具**: husky + commitlint + commitizen
 
 ## 构建、代码检查与测试命令
 
@@ -47,6 +52,11 @@
 - `pnpm migration:down`: 回滚最后一次迁移
 - `pnpm migration:pending`: 查看待处理的迁移
 - `pnpm migration:list`: 列出所有迁移状态
+- `pnpm orm`: 使用 MikroORM CLI 工具 (如 `pnpm orm schema:create --run`)
+
+### 其他工具
+- `pnpm cz`: 使用 commitizen 进行规范化的提交
+- `pnpm check-versions`: 检查版本一致性
 
 ### 开发服务器
 - `pnpm dev`: 启动开发服务器 (带热重载)
@@ -144,6 +154,14 @@
 
 ## 开发最佳实践
 
+### 全局配置架构
+
+- **模块结构**: 应用分为 `GlobalModule` (全局服务) 和 `FeaturesModule` (业务功能)
+- **全局管道**: 全局ValidationPipe使用422状态码处理验证错误
+- **全局过滤器**: 按执行顺序配置异常过滤器 (ValidationFilter -> HttpFilter -> DefaultFilter)
+- **全局守卫**: ThrottlerGuard提供全局限流保护
+- **全局拦截器**: FormatterInterceptor统一响应格式
+
 ### 任务执行原则
 
 - **任务优先**: 当任务没有完成时，专注于核心逻辑实现，不要修复格式错误问题
@@ -167,19 +185,21 @@
 - Service层主要负责业务逻辑
 - 注意代码的鲁棒性，如果有必要可以将业务逻辑抽象成多个Service
 - 使用日志记录请求开始、结束和关键参数
-- 使用 IdService 生成主键和雪花ID
+- 使用 IdService 生成主键 (`genPrimaryKey()`) 和雪花ID (`genSnowflakeId()`)
 - 使用 EntityManager 进行数据库事务操作
 
 ### 数据库设计原则
 
 - **ORM优先**: 必须使用 `MikroORM` 进行实体字段类型定义，严禁使用原生 SQL 语句
 - **文档更新**: Schema变更时必须更新[Entity 实体文档](./src/global/db/entities/README.md)
+- **迁移配置**: MikroORM配置位于 `src/mikro-orm.config.ts`，支持CLI和运行时两种模式
 
 ### 安全规范
 
 - **密码存储**: 使用 argon2 进行密码哈希，严禁明文存储
 - **敏感信息**: 严禁在日志中记录密码等敏感信息
 - **身份验证**: 使用 session + Redis 实现身份验证和授权
+- **Cookie管理**: 使用 @fastify/cookie 处理会话Cookie
 - **输入验证**: 使用 class-validator 进行所有 DTO 输入验证
 - **错误信息**: 避免泄露敏感信息，通过异常消息
 
@@ -229,9 +249,20 @@ src/
 
 ## 开发环境配置
 
+### 环境要求
 - **Node.js**: >= 20.0.0
 - **Bun**: >= 1.0.0 (推荐包管理器)
 - **包管理器**: 使用 `bun` 而非 `npm` 或 `pnpm`
+
+### 环境变量配置
+基于 `.env.sample` 配置以下环境变量：
+
+- **应用配置**: `NODE_ENV`, `APP_PORT`, `APP_HOST`, `COOKIE_SECRET`
+- **数据库配置**: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
+- **日志配置**: `LOG_LEVEL`
+- **Redis配置**: `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`, `REDIS_DB`, `REDIS_KEY_PREFIX`
+- **限流配置**: `THROTTLE_TTL`, `THROTTLE_LIMIT`, `SHORT_THROTTLE_TTL`, `SHORT_THROTTLE_LIMIT`
+- **雪花ID配置**: `SNOWFLAKE_EPOCH`
 
 ## Cursor/Copilot 规则
 
