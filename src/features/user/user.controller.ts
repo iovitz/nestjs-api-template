@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { CurrentUser } from "src/aspects/decorators/context.decorator";
 import { AuthGuard } from "src/aspects/guards/auth.guard";
-import { HttpMessageService } from "src/global/http-message/http-message.service";
+import { HttpContextService } from "src/global/http-context/http-context.service";
 import { LoginDto, RegisterDto } from "./user.dto";
 import { UserService } from "./user.service";
 
@@ -18,7 +18,7 @@ import { UserService } from "./user.service";
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly httpMessageService: HttpMessageService,
+    private readonly httpContextService: HttpContextService,
   ) {}
 
   @Post("register")
@@ -35,7 +35,7 @@ export class UserController {
     const result = await this.userService.login(body);
 
     // 使用CookieService设置会话Cookie
-    this.httpMessageService.setCookie("session", result.sessionId);
+    this.httpContextService.setCookie("session", result.sessionId);
 
     return result.user;
   }
@@ -61,7 +61,7 @@ export class UserController {
     await this.userService.logout(currentUser.session);
 
     // 清除Cookie
-    this.httpMessageService.clearCookie("session");
+    this.httpContextService.clearCookie("session");
 
     throw new UnauthorizedException("已登出");
   }

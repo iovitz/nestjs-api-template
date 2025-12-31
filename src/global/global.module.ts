@@ -8,7 +8,7 @@ import { LoggerModule, Params } from "nestjs-pino";
 import pino from "pino";
 import { CronjobService } from "./cronjob/cronjob.service";
 import { DbModule } from "./db/db.module";
-import { HttpMessageService } from "./http-message/http-message.service";
+import { HttpContextService } from "./http-context/http-context.service";
 import { IdService } from "./id/id.service";
 import { RedisModule } from "./redis/redis.module";
 
@@ -108,7 +108,7 @@ import { RedisModule } from "./redis/redis.module";
       }),
     }),
   ],
-  providers: [IdService, CronjobService, HttpMessageService],
-  exports: [IdService, HttpMessageService],
+  providers: [IdService, CronjobService, HttpContextService],
+  exports: [IdService, HttpContextService],
 })
 export class GlobalModule {}

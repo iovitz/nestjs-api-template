@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { REQUEST } from "@nestjs/core";
 
 @Injectable({ scope: Scope.REQUEST })
-export class HttpMessageService {
+export class HttpContextService {
   constructor(
     private readonly configService: ConfigService,
     @Inject(REQUEST) private readonly request: FastifyRequest,

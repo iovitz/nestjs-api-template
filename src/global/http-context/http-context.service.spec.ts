@@ -1,15 +1,15 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { HttpMessageService } from "./http-message.service";
+import { HttpContextService } from "./http-context.service";
 
-describe("httpMessageService", () => {
-  let service: HttpMessageService;
+describe("httpContextService", () => {
+  let service: HttpContextService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [HttpMessageService],
+      providers: [HttpContextService],
     }).compile();
 
-    service = module.get<HttpMessageService>(HttpMessageService);
+    service = module.get<HttpContextService>(HttpContextService);
   });
 
   it("should be defined", () => {
