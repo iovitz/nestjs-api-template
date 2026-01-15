@@ -1,4 +1,0 @@
-[install]
-# registry = "https://registry.npmjs.org/" # npm源
-registry = "https://registry.npmmirror.com/" # 淘宝源
-exact = true                                 # 安装时锁定精确版本
