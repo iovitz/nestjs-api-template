@@ -1,7 +1,7 @@
 import { Test } from "@nestjs/testing";
 import { AppModule } from "./../src/app.module";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
-import { REDIS_CLIENT, closeRedis } from "../src/global/redis/redis.module";
+import { REDIS_CLIENT } from "../src/global/redis/redis.module";
 
 describe("AppController (e2e)", () => {
   let app: NestFastifyApplication;
