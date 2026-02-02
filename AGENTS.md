@@ -2,13 +2,11 @@
 
 ## 产品定位
 
-**小时** 是一款面向中国年轻人的社交活动匹配移动应用，帮助用户发现、创建和参与各类社交活动，找到志同道合的"搭子"。
+xx 是一款面向 xxx 的 xxx 应用，帮助用户 xxx
 
-- **目标用户**：18-35岁寻求社交活动的年轻人
-- **核心价值**：降低社交门槛，让找人一起活动变得更简单
-- **产品slogan**：发现更多有趣的搭子，开启你的社交之旅
-
----
+- 目标用户：xxx
+- 核心价值：xxx
+- 产品slogan：xxx
 
 ## 项目概述
 
@@ -16,24 +14,22 @@
 
 ### 技术栈
 
-- **框架**：NestJS 11.x
-- **编译器**：SWC (用于快速编译)
-- **ORM**：MikroORM 6.x (PostgreSQL)
-- **缓存**：Redis (ioredis)
-- **验证**：class-validator + class-transformer
-- **密码**：argon2
-- **日志**：pino + nestjs-pino
-- **服务器**：Fastify
-- **限流**：@nestjs/throttler
-- **健康检查**：@nestjs/terminus
-- **定时任务**：@nestjs/schedule
-- **测试**：Jest + Supertest
-- **格式化**：oxfmt
-- **Linting**：oxlint
-- **包管理**：pnpm
-- **工具**：husky + commitlint + commitizen
-
----
+- 框架：NestJS 11.x
+- 编译器：SWC (用于快速编译)
+- ORM：MikroORM 6.x (PostgreSQL)
+- 缓存：Redis (ioredis)
+- 验证：class-validator + class-transformer
+- 密码：argon2
+- 日志：pino + nestjs-pino
+- 服务器：Fastify
+- 限流：@nestjs/throttler
+- 健康检查：@nestjs/terminus
+- 定时任务：@nestjs/schedule
+- 测试：Jest + Supertest
+- 格式化：oxfmt
+- Linting：oxlint
+- 包管理：pnpm
+- 工具：husky + commitlint + commitizen
 
 ## 构建、代码检查与测试命令
 
@@ -60,8 +56,6 @@
 ### 其他工具
 - `pnpm cz`：使用 commitizen 进行规范化的提交
 - `pnpm check-versions`：检查版本一致性
-
----
 
 ## 核心规范
 
@@ -104,8 +98,6 @@
 - 命名：采用 `[name].entity.ts` 格式（如 `user.entity.ts`）
 - 继承：所有 Entity 必须继承自 `EntityBase` 基类
 
----
-
 ## 代码风格指南
 
 ### 导入规范
@@ -136,10 +128,10 @@
 
 ### 命名规范
 
-- **PascalCase**：类名（如 `UserService`）、接口、类型、实体名称
-- **camelCase**：变量名、方法名、参数名
-- **kebab-case**：文件名（如 `user.service.ts`）、目录名
-- **SNAKE_CASE**：常量、环境变量
+- PascalCase：类名（如 `UserService`）、接口、类型、实体名称
+- camelCase：变量名、方法名、参数名
+- kebab-case：文件名（如 `user.service.ts`）、目录名
+- SNAKE_CASE：常量、环境变量
 
 - 前缀/后缀：
   - 控制器：`[name].controller.ts`
@@ -154,8 +146,6 @@
 - 错误信息描述清晰但不过于冗长
 - 异步操作使用 try/catch 捕获错误
 - 使用 class-validator 进行 DTO 验证
-
----
 
 ## 开发最佳实践
 
@@ -265,8 +255,6 @@ src/
     └── dto/              # 共享数据传输对象
 ```
 
----
-
 ## 文档编写规范
 
 - 使用 Markdown 格式，保持层级清晰
@@ -274,8 +262,6 @@ src/
 - 文档内容要求精简有效，不能冗余啰嗦
 - 不要在文档中引用项目中的具体代码或文件
 - 禁止使用表格格式
-
----
 
 ## 开发环境配置
 
