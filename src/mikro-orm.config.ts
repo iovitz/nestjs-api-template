@@ -1,6 +1,7 @@
 import process from "node:process";
 import { defineConfig } from "@mikro-orm/core";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
+import "dotenv/config";
 
 interface DBOptions {
   dbName: string;
