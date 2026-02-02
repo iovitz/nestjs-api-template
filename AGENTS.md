@@ -207,7 +207,34 @@
 - Cookie 管理：使用 @fastify/cookie 处理会话 Cookie
 - 输入验证：使用 class-validator 进行所有 DTO 输入验证
 
----
+### E2E 测试规范
+
+- 文件位置：`test/[module].e2e-spec.ts`
+- 测试范围：每个业务模块的每个接口至少编写一个成功请求的测试用例
+- 测试方式：使用 FastifyAdapter 和 `app.inject()` 方法发送请求
+- 测试内容：
+  - 测试接口返回正确的 HTTP 状态码
+  - 验证响应数据格式
+  - 认证接口需测试未登录时的 401 响应
+- Mock 依赖：使用 Jest mock 隔离外部依赖（数据库、Redis 等）
+- 清理工作：afterAll 中需关闭应用
+
+### 单元测试规范
+
+- 文件位置：`src/features/[module]/[service].spec.ts`
+- 测试范围：Service 层的核心业务逻辑
+- 测试方式：使用 Jest + Test.createTestingModule 创建独立测试模块
+- Mock 策略：
+  - 数据库操作：mock EntityRepository 和 EntityManager
+  - Redis 操作：mock Redis 客户端
+  - 外部服务：使用 jest.fn() 创建模拟函数
+- 测试内容：
+  - 测试正常业务流程返回正确结果
+  - 测试边界条件和异常处理
+  - 验证依赖方法被正确调用
+- 测试技巧：使用 `jest.spyOn()` 监控已有方法，使用 `jest.mock()` mock 模块
+
+
 
 ## 代码目录规范
 
