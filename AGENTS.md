@@ -1,5 +1,13 @@
 # AI开发指南
 
+## 产品定位
+
+**小时** 是一款面向中国年轻人的社交活动匹配移动应用，帮助用户发现、创建和参与各类社交活动，找到志同道合的"搭子"。
+
+- **目标用户**：18-35岁寻求社交活动的年轻人
+- **核心价值**：降低社交门槛，让找人一起活动变得更简单
+- **产品slogan**：发现更多有趣的搭子，开启你的社交之旅
+
 ## 项目概述
 
 基于NestJS + MikroORM + Redis的现代化后端架构，提供图书管理功能。采用模块化设计，包含完整的异常处理、日志记录、API测试等规范。
@@ -32,8 +40,7 @@
 ### 代码检查与格式化
 - `pnpm lint`: 使用 oxlint 进行代码检查
 - `pnpm lint:fix`: 自动修复代码检查问题
-- `pnpm format`: 使用 oxfmt 检查代码格式
-- `pnpm format:fix`: 自动修复代码格式问题
+- `pnpm format`: 使用 oxfmt 自动修复代码格式问题
 
 ### 测试
 - `pnpm test`: 使用 Jest 运行所有单元测试
@@ -44,15 +51,6 @@
 - **运行单个测试**: `pnpm test -- src/path/to/test.spec.ts`
 - **运行特定测试模式**: `pnpm test -- --testNamePattern="should create user"`
 - **API 测试**: `pnpm yac -n <api-name>` (从 api-test.http 运行特定 API 测试)
-
-### 数据库迁移
-- `pnpm migration:initial`: 创建初始迁移
-- `pnpm migration:create`: 创建新的迁移文件
-- `pnpm migration:up`: 执行所有待处理的迁移
-- `pnpm migration:down`: 回滚最后一次迁移
-- `pnpm migration:pending`: 查看待处理的迁移
-- `pnpm migration:list`: 列出所有迁移状态
-- `pnpm orm`: 使用 MikroORM CLI 工具 (如 `pnpm orm schema:create --run`)
 
 ### 其他工具
 - `pnpm cz`: 使用 commitizen 进行规范化的提交
@@ -110,7 +108,7 @@
 
 - **位置**: 所有Entity实体必须生成在`db`模块的`entities`目录下
 - **路径**: `src/global/db/entities/`
-- **命名**: 采用`[name].entity.ts`格式（如`user.entity.ts`、`book.entity.ts`）
+- **命名**: 采用`[name].entity.ts`格式（如`user.entity.ts`）
 - **继承**: 所有Entity必须继承自`EntityBase`基类
 
 ## 代码风格指南
@@ -192,7 +190,7 @@
 
 - **ORM优先**: 必须使用 `MikroORM` 进行实体字段类型定义，严禁使用原生 SQL 语句
 - **文档更新**: Schema变更时必须更新[Entity 实体文档](./src/global/db/entities/README.md)
-- **迁移配置**: MikroORM配置位于 `src/mikro-orm.config.ts`，支持CLI和运行时两种模式
+- **禁止迁移**: 不要使用任何方式进行数据迁移
 
 ### 安全规范
 
