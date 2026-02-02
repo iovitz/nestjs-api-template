@@ -13,8 +13,8 @@ export class ThrottlerGuard extends BaseThrottlerGuard {
 
   protected async getTracker(req: FastifyRequest): Promise<string> {
     return (
-      req.cookies.session ??
-      req.cookies["client-id"] ??
+      req.cookies?.session ??
+      req.cookies?.["client-id"] ??
       req.ip ??
       req.socket?.remoteAddress ??
       req.headers["x-forwarded-for"] ??
