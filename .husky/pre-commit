@@ -12,6 +12,24 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+# 运行单元测试
+echo "Running unit tests..."
+pnpm test --passWithNoTests
+
+if [ $? -ne 0 ]; then
+  echo "Unit tests failed. Please fix the test failures before committing."
+  exit 1
+fi
+
+# 运行 E2E 测试
+echo "Running E2E tests..."
+pnpm test:e2e --passWithNoTests
+
+if [ $? -ne 0 ]; then
+  echo "E2E tests failed. Please fix the test failures before committing."
+  exit 1
+fi
+
 # 只对暂存的TypeScript/JavaScript文件运行oxlint自动修复
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|ts|jsx|tsx)$' || true)
 
