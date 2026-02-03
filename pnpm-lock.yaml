@@ -108,6 +108,9 @@ importers:
       '@mikro-orm/migrations':
         specifier: 6.6.4
         version: 6.6.4(@mikro-orm/core@6.6.4)(@types/node@25.0.8)(pg@8.16.3)
+      '@mikro-orm/seeder':
+        specifier: 6.6.4
+        version: 6.6.4(@mikro-orm/core@6.6.4)
       '@nestjs/cli':
         specifier: 11.0.14
         version: 11.0.14(@swc/cli@0.7.10(@swc/core@1.15.8)(chokidar@4.0.3))(@swc/core@1.15.8)(@types/node@25.0.8)
@@ -847,6 +850,12 @@ packages:
 
   '@mikro-orm/postgresql@6.6.4':
     resolution: {integrity: sha512-s10sZraQrmKwi0F5c+QXuYfgXCbCKrQ+Peanx+eOYvAumsEVQ66u/JaVpvWtS6wWHxfJHBDlUW+kU4CIid5rng==}
+    engines: {node: '>= 18.12.0'}
+    peerDependencies:
+      '@mikro-orm/core': ^6.0.0
+
+  '@mikro-orm/seeder@6.6.4':
+    resolution: {integrity: sha512-gONrTSGhoemvQ61xPAm1QCssKNkrx98HVSC11MomDW2VZwn1UfjYsBWaKx5UIfryb+yQ7IzsqqX2hT1bSN6yCQ==}
     engines: {node: '>= 18.12.0'}
     peerDependencies:
       '@mikro-orm/core': ^6.0.0
@@ -5673,6 +5682,12 @@ snapshots:
       - sqlite3
       - supports-color
       - tedious
+
+  '@mikro-orm/seeder@6.6.4(@mikro-orm/core@6.6.4)':
+    dependencies:
+      '@mikro-orm/core': 6.6.4
+      fs-extra: 11.3.3
+      globby: 11.1.0
 
   '@napi-rs/nice-android-arm-eabi@1.1.1':
     optional: true

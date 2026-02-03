@@ -40,10 +40,13 @@ export default function getMikroORMConfig(_context: string, options?: DBOptions)
     try {
       return defineConfig({
         ...baseConfig,
-        extensions: [require("@mikro-orm/migrations").Migrator],
+        extensions: [
+          require("@mikro-orm/migrations").Migrator,
+          require("@mikro-orm/seeder").SeedManager,
+        ],
         migrations: {
           tableName: "mikro_orm_migrations", // 迁移历史记录表名
-          path: "migrations", // 编译后的迁移文件路径
+          path: "src/global/db/migrations", // 编译后的迁移文件路径
           glob: "!(*.d).{js,ts}", // 迁移文件匹配模式
           silent: false, // 是否静默模式
           transactional: true, // 是否使用事务
@@ -52,6 +55,21 @@ export default function getMikroORMConfig(_context: string, options?: DBOptions)
           dropTables: true, // 是否允许删除表
           safe: true, // 是否安全模式（不删除列）
           snapshot: true, // 是否生成快照文件
+        },
+        seeder: {
+          path: "dist/global/db/seeders", // 编译后的种子文件路径
+          pathTs: "src/global/db/seeders", // TypeScript 种子文件路径
+          defaultSeeder: "DatabaseSeeder", // 默认种子执行器
+          emit: "ts", // 种子文件格式
+          glob: "seeder.ts", // 匹配模式
+          fileName: (className: string) => {
+            const cleanName = className.replace(/Seeder/g, ".seeder");
+            const kebabCase = cleanName
+              .replace(/([a-z])([A-Z])/g, "$1-$2") // 小写字母和大写字母之间加短横线
+              .replace(/([A-Z]+)([A-Z][a-z])/g, "$1-$2") // 连续大写字母后跟大写字母加小写字母
+              .toLowerCase();
+            return kebabCase;
+          }, // 文件命名规则
         },
       });
     } catch (error) {
