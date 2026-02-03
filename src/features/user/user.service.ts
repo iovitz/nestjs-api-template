@@ -7,19 +7,20 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
-import argon2 from "argon2";
 import { omit } from "es-toolkit";
 import Redis from "ioredis";
 import { User } from "src/global/db/entities/user.entity";
 import { IdService } from "src/global/id/id.service";
 import { REDIS_CLIENT } from "src/global/redis/redis.module";
 import { LoginDto, RegisterDto } from "./user.dto";
+import { CryptoService } from "src/global/crypto/crypto.service";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: EntityRepository<User>,
     private readonly em: EntityManager,
+    private readonly cryptoService: CryptoService,
     private readonly idService: IdService,
     @Inject(REDIS_CLIENT) private readonly redisClient: Redis,
   ) {}
@@ -34,7 +35,7 @@ export class UserService {
     }
 
     // 加密密码
-    const hashedPassword = await argon2.hash(password);
+    const hashedPassword = await this.cryptoService.hashPassword(password);
 
     // 创建用户
     const user = this.userRepository.create({
@@ -61,7 +62,7 @@ export class UserService {
     }
 
     // 验证密码
-    const isPasswordValid = await argon2.verify(user.password, password);
+    const isPasswordValid = await this.cryptoService.verifyPassword(user.password, password);
     if (!isPasswordValid) {
       throw new UnauthorizedException("邮箱或密码错误");
     }

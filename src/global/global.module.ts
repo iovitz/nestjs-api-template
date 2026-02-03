@@ -11,6 +11,7 @@ import { DbModule } from "./db/db.module";
 import { HttpContextService } from "./http-context/http-context.service";
 import { IdService } from "./id/id.service";
 import { RedisModule } from "./redis/redis.module";
+import { CryptoService } from "./crypto/crypto.service";
 
 @Global()
 @Module({
@@ -108,7 +109,7 @@ import { RedisModule } from "./redis/redis.module";
       }),
     }),
   ],
-  providers: [IdService, CronjobService, HttpContextService],
-  exports: [IdService, HttpContextService],
+  providers: [IdService, CronjobService, HttpContextService, CryptoService],
+  exports: [IdService, HttpContextService, CryptoService],
 })
 export class GlobalModule {}
