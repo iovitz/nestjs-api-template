@@ -1,27 +1,26 @@
 import { Seeder } from "@mikro-orm/seeder";
 import { User } from "../entities/user.entity";
 import { EntityManager } from "@mikro-orm/core";
+import { generateSeedId } from "./seed-utils";
+import argon2 from "argon2";
 
 export class UserSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     // 检查是否已存在用户，避免重复插入
-    const existingUser = await em.findOne(User, { email: "admin@xiaoshi.dev" });
-    if (existingUser) {
-      console.log("Admin user already exists, skipping...");
+    const record = await em.findOne(User, { email: "me@gmail.com" });
+    if (record) {
+      console.log("Test user already exists, skipping...");
       return;
     }
 
-    // // 注意：实际项目中应该使用加密后的密码
-    const hashedPassword = "$argon2id$v=19$m=65536,t=3,p=4$PlaceholderHash$PlaceholderValue";
-
     em.create(User, {
-      id: "1",
-      name: "Admin",
-      email: "admin@xiaoshi.dev",
-      password: hashedPassword,
+      id: generateSeedId(),
+      name: "Me",
+      email: "me@gmail.com",
+      password: await argon2.hash("123123"),
       status: 0,
     });
 
-    console.log("Admin user seeded successfully!");
+    console.log(`User seeder completed, inserted ${1} banners`);
   }
 }
