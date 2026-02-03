@@ -13,7 +13,7 @@ NestJS-based backend server with PostgreSQL database (MikroORM), Redis caching, 
 - `src/app.module.ts` - Root module with global providers (interceptors, filters, guards, pipes)
 - `src/features/` - Feature modules (user, health, etc.) following domain-driven design
 - `src/global/` - Global module with cross-cutting concerns:
-  - `crypto/` - Cryptographic services (Ed25519 signing/verification, argon2 password hashing)
+  - `crypto/` - Cryptographic services (ECIES encryption/decryption, argon2 password hashing)
   - `db/` - Database configuration and entities
   - `redis/` - Redis configuration
   - `id/` - Snowflake ID generation service

@@ -48,6 +48,7 @@
     "class-transformer": "0.5.1",
     "class-validator": "0.14.3",
     "dotenv-cli": "11.0.0",
+    "eciesjs": "0.4.17",
     "es-toolkit": "1.43.0",
     "fastify": "5.6.2",
     "ioredis": "5.9.1",
