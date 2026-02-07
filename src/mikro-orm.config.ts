@@ -24,11 +24,11 @@ export default function getMikroORMConfig(_context: string, options?: DBOptions)
   const baseConfig = {
     // 1. 数据库核心配置
     driver: PostgreSqlDriver,
-    dbName: options?.dbName ?? process.env.DB_NAME, // 数据库名
-    host: options?.host ?? process.env.DB_HOST, // 数据库地址
-    port: options?.port || Number(process.env.DB_PORT) || 5432, // 端口（MySQL 默认 3306，PostgreSQL 5432）
-    user: options?.user ?? process.env.DB_USER, // 用户名
-    password: options?.password ?? process.env.DB_PASSWORD, // 密码
+    dbName: options?.dbName ?? process.env.POSTGRE_NAME,
+    host: options?.host ?? process.env.POSTGRE_HOST,
+    port: options?.port || Number(process.env.POSTGRE_PORT) || 5432,
+    user: options?.user ?? process.env.POSTGRE_USER,
+    password: options?.password ?? process.env.POSTGRE_PASSWORD,
 
     // 2. 实体配置
     entities: ["dist/**/entities/*.entity.js"], // 编译后的实体路径（TS 项目必填，需与 tsconfig 输出目录一致）
