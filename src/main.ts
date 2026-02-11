@@ -48,6 +48,13 @@ async function bootstrap() {
   const host = configService.get("APP_HOST", "0.0.0.0");
   await app.listen(Number.parseInt(portStr), host);
   logger.log({ isProd }, `Server running in http://${host}:${portStr}`, "NestApp");
+
+  /**
+   * 监听未捕获的 Promise 错误，防止应用崩溃
+   */
+  process.on("unhandledRejection", (reason) => {
+    logger.error(reason, "unhandle rejection");
+  });
 }
 
 bootstrap();
