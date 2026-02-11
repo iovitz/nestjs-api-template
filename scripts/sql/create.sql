@@ -1,0 +1,10 @@
+DROP DATABASE IF EXISTS nest;
+DROP ROLE IF EXISTS nest_user;
+CREATE DATABASE nest;
+CREATE ROLE nest_user LOGIN PASSWORD '123123';
+GRANT ALL PRIVILEGES ON DATABASE nest TO nest_user;
+\ c nest;
+-- 链接到数据库
+CREATE SCHEMA nest AUTHORIZATION nest_user;
+ALTER ROLE nest_user
+SET search_path = nest;
