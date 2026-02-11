@@ -1,9 +1,11 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "ignorePatterns": [
-    "**/*.{md,lock,json}",
+    "**/*.{md,lock,json,yaml,yml}",
     "node_modules/*",
     "dist/*",
-    "migrations/**/*"
+    "migrations/**/*",
+    "coverage/*",
+    "*.log"
   ]
 }
