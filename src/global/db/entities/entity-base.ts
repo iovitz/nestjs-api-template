@@ -1,4 +1,4 @@
-import { OptionalProps, PrimaryKey, Property, t } from "@mikro-orm/postgresql";
+import { OptionalProps, PrimaryKey, Property, raw } from "@mikro-orm/postgresql";
 
 export abstract class EntityBase {
   [OptionalProps]?: "createdAt" | "updatedAt";
@@ -10,14 +10,17 @@ export abstract class EntityBase {
   id: string;
 
   @Property({
-    type: t.datetime,
-    comment: "时间",
+    type: "timestamp",
+    comment: "创建时间",
+    default: raw("CURRENT_TIMESTAMP"),
   })
-  createdAt = new Date();
+  createdAt: Date;
 
   @Property({
-    type: t.datetime,
-    onUpdate: () => new Date(),
+    type: "timestamp",
+    comment: "更新时间",
+    default: raw("CURRENT_TIMESTAMP"),
+    onUpdate: raw("CURRENT_TIMESTAMP"),
   })
-  updatedAt = new Date();
+  updatedAt: Date;
 }
