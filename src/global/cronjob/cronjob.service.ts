@@ -10,7 +10,7 @@ export class CronjobService {
   /**
    * 打印系统负载
    */
-  @Cron("*/5 * * * *")
+  @Cron("*/1 * * * *")
   async logSystemLoad() {
     const memoryUsage = process.memoryUsage();
     const loadStatus = await systeminformation.currentLoad();
