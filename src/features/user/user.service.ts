@@ -46,7 +46,7 @@ export class UserService {
       status: 0, // 正常状态
     });
 
-    await this.em.persistAndFlush(user);
+    await this.em.persist(user).flush();
 
     // 返回用户信息（不包含密码）
     return omit(user, ["password"]);
@@ -74,7 +74,7 @@ export class UserService {
 
     // 更新最后登录时间
     user.lastLoginAt = new Date();
-    await this.em.persistAndFlush(user);
+    await this.em.flush();
 
     // 生成session并写入Redis
     const sessionId = this.generateSessionId();

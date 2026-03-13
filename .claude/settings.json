@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(*)",
-      "Skill(*)"
+      "Skill(*)",
+      "WebSearch"
     ],
     "deny": []
   }

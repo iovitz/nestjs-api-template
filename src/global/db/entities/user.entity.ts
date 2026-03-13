@@ -1,4 +1,5 @@
-import { Entity, Property, t } from "@mikro-orm/postgresql";
+import { Entity, Property } from "@mikro-orm/decorators/legacy";
+import { t } from "@mikro-orm/postgresql";
 import { EntityBase } from "./entity-base";
 
 @Entity({ tableName: "users" })

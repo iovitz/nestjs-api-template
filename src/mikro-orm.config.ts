@@ -46,7 +46,8 @@ export default function getMikroORMConfig(_context: string, options?: DBOptions)
         ],
         migrations: {
           tableName: "mikro_orm_migrations", // 迁移历史记录表名
-          path: "src/global/db/migrations", // 编译后的迁移文件路径
+          path: "dist/global/db/migrations", // 编译后的迁移文件路径
+          pathTs: "src/global/db/migrations", // TypeScript 源文件路径
           glob: "!(*.d).{js,ts}", // 迁移文件匹配模式
           silent: false, // 是否静默模式
           transactional: true, // 是否使用事务
