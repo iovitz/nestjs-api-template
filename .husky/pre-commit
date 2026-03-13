@@ -5,7 +5,7 @@ node scripts/check-versions.js
 
 # 运行TypeScript编译检查
 echo "Running TypeScript type check..."
-bunx tsc --noEmit
+pnpm exec tsc --noEmit
 
 if [ $? -ne 0 ]; then
   echo "TypeScript type check failed. Please fix the type errors before committing."
