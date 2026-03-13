@@ -1,8 +1,8 @@
-DROP DATABASE IF EXISTS test;
-DROP ROLE IF EXISTS test_user;
-CREATE DATABASE test;
-CREATE ROLE test_user LOGIN PASSWORD '123123';
-GRANT ALL PRIVILEGES ON DATABASE test TO test_user;
-\ c test;
-ALTER ROLE test_user
-SET search_path = test;
+DROP DATABASE IF EXISTS nest;
+DROP ROLE IF EXISTS nest_user;
+CREATE DATABASE nest;
+CREATE ROLE nest_user LOGIN PASSWORD '123123';
+GRANT ALL PRIVILEGES ON DATABASE nest TO nest_user;
+\ c nest;
+ALTER ROLE nest_user
+SET search_path = nest;
