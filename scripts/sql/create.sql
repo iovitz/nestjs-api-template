@@ -4,5 +4,5 @@ CREATE DATABASE nest;
 CREATE ROLE nest_user LOGIN PASSWORD '123123';
 GRANT ALL PRIVILEGES ON DATABASE nest TO nest_user;
 \ c nest;
-ALTER ROLE nest_user
-SET search_path = nest;
+GRANT USAGE,
+  CREATE ON SCHEMA public TO nest_user;
