@@ -2,7 +2,9 @@ import fastifyCookie from "@fastify/cookie";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { Logger } from "nestjs-pino";
+import { apiReference } from "@scalar/nestjs-api-reference";
 import { AppModule } from "./app.module";
 import { IdService } from "./global/id/id.service";
 
@@ -40,6 +42,25 @@ async function bootstrap() {
   await app.register(fastifyCookie as any, {
     secret: configService.getOrThrow("COOKIE_SECRET") as string,
   });
+
+  // Swagger 配置
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle("NestJS API")
+    .setDescription("The NestJS API description")
+    .setVersion("1.0")
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+
+  // 注册 Scalar API Reference 中间件
+  app.use(
+    "/reference",
+    apiReference({
+      content: document,
+      withFastify: true,
+    }),
+  );
 
   const isProd = configService.get("IS_PRODUCTION", false);
 
