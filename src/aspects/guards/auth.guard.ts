@@ -35,13 +35,13 @@ export class AuthGuard implements CanActivate {
 
     try {
       const session = JSON.parse(sessionData);
-      if (!session.userId) {
+      if (!session.id) {
         throw new UnauthorizedException("会话数据无效");
       }
 
       // 将用户信息附加到请求对象上，供后续使用
-      request.user = {
-        id: session.userId,
+      request.account = {
+        id: session.id,
         session: sessionId,
       };
 

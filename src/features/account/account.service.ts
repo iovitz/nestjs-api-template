@@ -9,16 +9,16 @@ import {
 } from "@nestjs/common";
 import { omit } from "es-toolkit";
 import Redis from "ioredis";
-import { User } from "src/global/db/entities/user.entity";
+import { Account } from "src/global/db/entities/account.entity";
 import { IdService } from "src/global/id/id.service";
 import { REDIS_CLIENT } from "src/global/redis/redis.module";
-import { LoginDto, RegisterDto } from "./user.dto";
+import { LoginDto, RegisterDto } from "./account.dto";
 import { CryptoService } from "src/global/crypto/crypto.service";
 
 @Injectable()
-export class UserService {
+export class AccountService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: EntityRepository<User>,
+    @InjectRepository(Account) private readonly accountRepository: EntityRepository<Account>,
     private readonly em: EntityManager,
     private readonly cryptoService: CryptoService,
     private readonly idService: IdService,
@@ -29,8 +29,8 @@ export class UserService {
     // TODO 校验验证码
 
     // 检查邮箱是否已存在
-    const existingUser = await this.userRepository.findOne({ email });
-    if (existingUser) {
+    const existingAccount = await this.accountRepository.findOne({ email });
+    if (existingAccount) {
       throw new ConflictException("邮箱已被注册");
     }
 
@@ -38,7 +38,7 @@ export class UserService {
     const hashedPassword = await this.cryptoService.hashPassword(password);
 
     // 创建用户
-    const user = this.userRepository.create({
+    const account = this.accountRepository.create({
       id: this.idService.genPrimaryKey(),
       name,
       email,
@@ -46,42 +46,42 @@ export class UserService {
       status: 0, // 正常状态
     });
 
-    await this.em.persist(user).flush();
+    await this.em.persist(account).flush();
 
     // 返回用户信息（不包含密码）
-    return omit(user, ["password"]);
+    return omit(account, ["password"]);
   }
 
   async login({ email, password }: LoginDto) {
     // TODO 校验验证码
 
     // 查找用户
-    const user = await this.userRepository.findOne({ email });
-    if (!user) {
+    const account = await this.accountRepository.findOne({ email });
+    if (!account) {
       throw new UnauthorizedException("邮箱或密码错误");
     }
 
     // 验证密码
-    const isPasswordValid = await this.cryptoService.verifyPassword(user.password, password);
+    const isPasswordValid = await this.cryptoService.verifyPassword(account.password, password);
     if (!isPasswordValid) {
       throw new UnauthorizedException("邮箱或密码错误");
     }
 
     // 检查用户状态
-    if (user.status !== 0) {
+    if (account.status !== 0) {
       throw new UnauthorizedException("账号状态异常");
     }
 
     // 更新最后登录时间
-    user.lastLoginAt = new Date();
+    account.lastLoginAt = new Date();
     await this.em.flush();
 
     // 生成session并写入Redis
     const sessionId = this.generateSessionId();
     const sessionData = {
-      userId: user.id,
-      email: user.email,
-      name: user.name,
+      id: account.id,
+      email: account.email,
+      name: account.name,
       loginAt: new Date().toISOString(),
     };
 
@@ -90,31 +90,31 @@ export class UserService {
 
     // 返回用户数据和sessionId
     return {
-      user: this.sanitizeUserData(user),
+      account: this.sanitizeAccountData(account),
       sessionId,
     };
   }
 
   async findById(id: string) {
-    const user = await this.userRepository.findOne({ id });
-    if (!user) {
+    const account = await this.accountRepository.findOne({ id });
+    if (!account) {
       throw new NotFoundException("用户不存在");
     }
 
-    return this.sanitizeUserData(user);
+    return this.sanitizeAccountData(account);
   }
 
   async findByEmail(email: string) {
-    const user = await this.userRepository.findOne({ email });
-    if (!user) {
+    const account = await this.accountRepository.findOne({ email });
+    if (!account) {
       return null;
     }
 
-    return this.sanitizeUserData(user);
+    return this.sanitizeAccountData(account);
   }
 
-  async sanitizeUserData(user: User) {
-    return omit(user, ["password", "createdAt"]);
+  async sanitizeAccountData(account: Account) {
+    return omit(account, ["password", "createdAt"]);
   }
 
   /**

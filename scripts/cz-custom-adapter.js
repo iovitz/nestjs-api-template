@@ -16,7 +16,7 @@ const types = [
   { value: "revert", name: "⏪ revert: 回滚提交" },
 ];
 
-const scopes = ["user", "health", "db", "api", "ui", "config", "ci", "deps"];
+const scopes = ["account", "health", "db", "api", "ui", "config", "ci", "deps"];
 
 const questions = [
   {

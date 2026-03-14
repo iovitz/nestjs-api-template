@@ -1,13 +1,13 @@
 import { createParamDecorator, ExecutionContext, UnauthorizedException } from "@nestjs/common";
 
 // 获取用户IP
-export const CurrentUser = createParamDecorator((_: unknown, ctx: ExecutionContext) => {
+export const CurrentAccount = createParamDecorator((_: unknown, ctx: ExecutionContext) => {
   const req = ctx.switchToHttp().getRequest<FastifyRequest>();
-  const user = req.user;
-  if (!user) {
+  const account = req.account;
+  if (!account) {
     throw new UnauthorizedException();
   }
-  return user;
+  return account;
 });
 
 // 获取用户IP

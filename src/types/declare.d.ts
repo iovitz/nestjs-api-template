@@ -1,12 +1,12 @@
 import { FastifyReply as FastifyReplyType, FastifyRequest as FastifyRequestType } from "fastify";
 
 declare global {
-  interface AuthedUser {
+  interface AuthedAccount {
     id: string;
     session: string;
   }
   type FastifyRequest = FastifyRequestType & {
-    user?: AuthedUser;
+    account?: AuthedAccount;
     replyRef: FastifyReplyType;
   };
   type FastifyReply = FastifyReplyType;

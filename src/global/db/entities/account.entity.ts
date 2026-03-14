@@ -2,8 +2,8 @@ import { Entity, Property } from "@mikro-orm/decorators/legacy";
 import { t } from "@mikro-orm/postgresql";
 import { EntityBase } from "./entity-base";
 
-@Entity({ tableName: "users" })
-export class User extends EntityBase {
+@Entity({ tableName: "accounts" })
+export class Account extends EntityBase {
   @Property({
     type: t.text,
     length: 10,
