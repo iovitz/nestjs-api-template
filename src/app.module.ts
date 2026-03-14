@@ -7,10 +7,9 @@ import { ThrottlerGuard } from "./aspects/guards/throttler.guard";
 import { FormatterInterceptor } from "./aspects/interceptors/formatter/formatter.interceptor";
 import { FeaturesModule } from "./features/features.module";
 import { GlobalModule } from "./global/global.module";
-import { AccountModule } from "./features/account/account.module";
 
 @Module({
-  imports: [GlobalModule, FeaturesModule, AccountModule],
+  imports: [GlobalModule, FeaturesModule],
 
   providers: [
     // #region Interceptors
