@@ -4,6 +4,7 @@
 
 - Use `pnpm` as the package manager, never use `npm`
 - Never use stupid emoji characters
+- Never run the server, and never run build commands
 
 ## CheckList
 
