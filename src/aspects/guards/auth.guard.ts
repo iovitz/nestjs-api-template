@@ -1,9 +1,9 @@
 import {
-  CanActivate,
-  ExecutionContext,
-  Inject,
-  Injectable,
-  UnauthorizedException,
+	CanActivate,
+	ExecutionContext,
+	Inject,
+	Injectable,
+	UnauthorizedException,
 } from "@nestjs/common";
 import Redis from "ioredis";
 import { HttpContextService } from "src/global/http-context/http-context.service";
@@ -11,43 +11,43 @@ import { REDIS_CLIENT } from "src/global/redis/redis.module";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    @Inject(REDIS_CLIENT) private readonly redisClient: Redis,
-    private readonly httpContextService: HttpContextService,
-  ) {}
+	constructor(
+		@Inject(REDIS_CLIENT) private readonly redisClient: Redis,
+		private readonly httpContextService: HttpContextService,
+	) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<FastifyRequest>();
-    const sessionId = this.httpContextService.getCookie("session");
+	async canActivate(context: ExecutionContext): Promise<boolean> {
+		const request = context.switchToHttp().getRequest<FastifyRequest>();
+		const sessionId = this.httpContextService.getCookie("session");
 
-    if (!sessionId) {
-      throw new UnauthorizedException("请先登录");
-    }
+		if (!sessionId) {
+			throw new UnauthorizedException("请先登录");
+		}
 
-    // 从Redis获取session数据
-    const key = `session:${sessionId}`;
-    const sessionData = await this.redisClient.get(key);
+		// 从Redis获取session数据
+		const key = `session:${sessionId}`;
+		const sessionData = await this.redisClient.get(key);
 
-    if (!sessionData) {
-      this.httpContextService.clearCookie("session");
-      throw new UnauthorizedException("会话已过期，请重新登录");
-    }
+		if (!sessionData) {
+			this.httpContextService.clearCookie("session");
+			throw new UnauthorizedException("会话已过期，请重新登录");
+		}
 
-    try {
-      const session = JSON.parse(sessionData);
-      if (!session.id) {
-        throw new UnauthorizedException("会话数据无效");
-      }
+		try {
+			const session = JSON.parse(sessionData);
+			if (!session.id) {
+				throw new UnauthorizedException("会话数据无效");
+			}
 
-      // 将用户信息附加到请求对象上，供后续使用
-      request.account = {
-        id: session.id,
-        session: sessionId,
-      };
+			// 将用户信息附加到请求对象上，供后续使用
+			request.account = {
+				id: session.id,
+				session: sessionId,
+			};
 
-      return true;
-    } catch {
-      throw new UnauthorizedException("会话数据格式错误");
-    }
-  }
+			return true;
+		} catch {
+			throw new UnauthorizedException("会话数据格式错误");
+		}
+	}
 }

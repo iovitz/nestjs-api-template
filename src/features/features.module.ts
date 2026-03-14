@@ -3,6 +3,6 @@ import { HealthModule } from "./health/health.module";
 import { AccountModule } from "./account/account.module";
 
 @Module({
-  imports: [HealthModule, AccountModule],
+	imports: [HealthModule, AccountModule],
 })
 export class FeaturesModule {}

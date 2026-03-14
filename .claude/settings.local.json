@@ -1,9 +1,9 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(pnpm add:*)",
-      "Bash(npx tsc:*)",
-      "Bash(timeout 10 pnpm dev)"
-    ]
-  }
+	"permissions": {
+		"allow": [
+			"Bash(pnpm add:*)",
+			"Bash(npx tsc:*)",
+			"Bash(timeout 10 pnpm dev)"
+		]
+	}
 }

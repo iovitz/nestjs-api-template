@@ -6,8 +6,8 @@ import { Account } from "src/global/db/entities/account.entity";
 import { ConfigModule } from "@nestjs/config";
 
 @Module({
-  controllers: [AccountController],
-  providers: [AccountService],
-  imports: [MikroOrmModule.forFeature([Account]), ConfigModule],
+	controllers: [AccountController],
+	providers: [AccountService],
+	imports: [MikroOrmModule.forFeature([Account]), ConfigModule],
 })
 export class AccountModule {}

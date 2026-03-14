@@ -4,59 +4,59 @@ import { REQUEST } from "@nestjs/core";
 
 @Injectable({ scope: Scope.REQUEST })
 export class HttpContextService {
-  constructor(
-    private readonly configService: ConfigService,
-    @Inject(REQUEST) private readonly request: FastifyRequest,
-  ) {}
+	constructor(
+		private readonly configService: ConfigService,
+		@Inject(REQUEST) private readonly request: FastifyRequest,
+	) {}
 
-  get reply() {
-    return this.request.replyRef;
-  }
+	get reply() {
+		return this.request.replyRef;
+	}
 
-  setCookie(key: CookieKeys, value: string, options: CookieOptions = {}): void {
-    const defaultOptions: CookieOptions = {
-      httpOnly: true,
-      secure: this.configService.get("NODE_ENV") === "prod",
-      sameSite: "strict",
-      path: "/",
-    };
+	setCookie(key: CookieKeys, value: string, options: CookieOptions = {}): void {
+		const defaultOptions: CookieOptions = {
+			httpOnly: true,
+			secure: this.configService.get("NODE_ENV") === "prod",
+			sameSite: "strict",
+			path: "/",
+		};
 
-    const finalOptions = { ...defaultOptions, ...options };
+		const finalOptions = { ...defaultOptions, ...options };
 
-    this.reply.setCookie(key, value, finalOptions);
-  }
+		this.reply.setCookie(key, value, finalOptions);
+	}
 
-  getCookie(name: string): string | undefined {
-    return this.request.cookies?.[name];
-  }
+	getCookie(name: string): string | undefined {
+		return this.request.cookies?.[name];
+	}
 
-  clearCookie(
-    key: CookieKeys,
-    options: CookieOptions = {
-      path: "/",
-    },
-  ): void {
-    this.reply.clearCookie(key, options);
-  }
+	clearCookie(
+		key: CookieKeys,
+		options: CookieOptions = {
+			path: "/",
+		},
+	): void {
+		this.reply.clearCookie(key, options);
+	}
 
-  getHeader(name: string): string | undefined {
-    const header = this.request.headers[name];
-    return Array.isArray(header) ? header[0] : header;
-  }
+	getHeader(name: string): string | undefined {
+		const header = this.request.headers[name];
+		return Array.isArray(header) ? header[0] : header;
+	}
 
-  setHeader(name: string, value: string): void {
-    this.reply.header(name, value);
-  }
+	setHeader(name: string, value: string): void {
+		this.reply.header(name, value);
+	}
 }
 
 type CookieKeys = "session";
 
 export interface CookieOptions {
-  httpOnly?: boolean;
-  secure?: boolean;
-  sameSite?: "strict" | "lax" | "none" | boolean;
-  maxAge?: number;
-  path?: string;
-  domain?: string;
-  expires?: Date;
+	httpOnly?: boolean;
+	secure?: boolean;
+	sameSite?: "strict" | "lax" | "none" | boolean;
+	maxAge?: number;
+	path?: string;
+	domain?: string;
+	expires?: Date;
 }
