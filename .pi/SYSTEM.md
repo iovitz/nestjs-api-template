@@ -8,6 +8,6 @@
 
 ## CheckList
 
-[ ] Run `pnpm lint` with no errors
+[ ] Run `pnpm check` with no errors
 [ ] Code has no redundant implementations, no over-encapsulation, and is robust
 [ ] Task is completed with minimal changes

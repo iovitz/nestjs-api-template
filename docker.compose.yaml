@@ -1,0 +1,45 @@
+services:
+  redis:
+    # replace password with your own
+    command: redis-server /etc/redis/redis.conf --appendonly yes --requirepass "simple_password"
+    container_name: ${CURRENT_APP}-redis
+    image: redis:8.6.1
+    labels:
+      app: wulidisk
+    ports:
+      - 0.0.0.0:16379:6379
+    restart: always
+    volumes:
+      - /opt/${CURRENT_APP}/redis/data:/data
+      - /opt/${CURRENT_APP}/redis/conf/redis.conf:/etc/redis/redis.conf
+      - /opt/${CURRENT_APP}/redis/logs:/logs
+  postgres:
+    container_name: ${CURRENT_APP}-postgres
+    image: postgres:18.3-alpine
+    restart: always
+    labels:
+      app: wulidisk
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=simple_password
+    ports:
+      - 0.0.0.0:15432:5432
+    volumes:
+      - /opt/${CURRENT_APP}/postgres:/var/lib/postgresql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-h",
+          "127.0.0.1",
+          "-p",
+          "5432",
+          "-q",
+          "-U",
+          "postgres",
+        ]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
