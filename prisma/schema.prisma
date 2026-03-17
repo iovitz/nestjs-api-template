@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/global/db/prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  // 主键（雪花ID）
+  id          String    @id
+  // 用户昵称
+  name        String    @db.VarChar(10)
+  // 邮件
+  email       String    @unique @db.VarChar(32)
+  // 密码
+  password    String    @db.VarChar(255)
+  // 状态：0（用户正常），1（未校验邮箱），2（账号被封禁）
+  status      Int       @default(0)
+  // 最后登录时间
+  lastLoginAt DateTime?
+  // 创建时间
+  createdAt   DateTime  @default(now())
+  // 更新时间
+  updatedAt   DateTime  @updatedAt
+}

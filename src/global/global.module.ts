@@ -113,6 +113,7 @@ import { CryptoService } from "./crypto/crypto.service";
 				],
 			}),
 		}),
+		DbModule,
 	],
 	providers: [IdService, CronjobService, HttpContextService, CryptoService],
 	exports: [IdService, HttpContextService, CryptoService],

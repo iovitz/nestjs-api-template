@@ -17,8 +17,12 @@ import {
 import { CurrentAccount } from "src/aspects/decorators/context.decorator";
 import { AuthGuard } from "src/aspects/guards/auth.guard";
 import { HttpContextService } from "src/global/http-context/http-context.service";
-import { Account } from "src/global/db/entities/account.entity";
-import { LoginDto, RegisterDto } from "./account.dto";
+import {
+	AccountResponse,
+	LoginDto,
+	LogoutResponse,
+	RegisterDto,
+} from "./account.dto";
 import { AccountService } from "./account.service";
 
 @ApiTags("账户")
@@ -32,8 +36,8 @@ export class AccountController {
 	@Post("register")
 	@HttpCode(HttpStatus.CREATED)
 	@ApiOperation({ summary: "注册账户" })
-	@ApiResponse({ status: 201, description: "注册成功", type: Account })
-	async register(@Body() body: RegisterDto) {
+	@ApiResponse({ status: 201, description: "注册成功", type: AccountResponse })
+	async register(@Body() body: RegisterDto): Promise<AccountResponse> {
 		const account = await this.accountService.register(body);
 
 		return account;
@@ -45,9 +49,9 @@ export class AccountController {
 	@ApiResponse({
 		status: 200,
 		description: "登录成功，返回账户信息",
-		type: Account,
+		type: AccountResponse,
 	})
-	async login(@Body() body: LoginDto) {
+	async login(@Body() body: LoginDto): Promise<AccountResponse> {
 		const result = await this.accountService.login(body);
 
 		// 使用CookieService设置会话Cookie
@@ -60,9 +64,11 @@ export class AccountController {
 	@UseGuards(AuthGuard)
 	@ApiBearerAuth()
 	@ApiOperation({ summary: "获取当前账户信息" })
-	@ApiResponse({ status: 200, description: "获取成功", type: Account })
+	@ApiResponse({ status: 200, description: "获取成功", type: AccountResponse })
 	@ApiResponse({ status: 401, description: "未授权" })
-	async getProfile(@CurrentAccount() currentAccount: AuthedAccount) {
+	async getProfile(
+		@CurrentAccount() currentAccount: AuthedAccount,
+	): Promise<AccountResponse> {
 		// 从Redis获取session数据
 		const sessionData = await this.accountService.getSessionData(
 			currentAccount.session,
@@ -80,14 +86,16 @@ export class AccountController {
 	@UseGuards(AuthGuard)
 	@ApiBearerAuth()
 	@ApiOperation({ summary: "退出登录" })
-	@ApiResponse({ status: 200, description: "退出成功" })
-	async logout(@CurrentAccount() account: AuthedAccount) {
+	@ApiResponse({ status: 401, description: "退出成功", type: LogoutResponse })
+	async logout(
+		@CurrentAccount() account: AuthedAccount,
+	): Promise<LogoutResponse> {
 		// 调用service进行登出处理
 		await this.accountService.logout(account.session);
 
 		// 清除Cookie
 		this.httpContextService.clearCookie("session");
 
-		throw new UnauthorizedException("已登出");
+		throw new UnauthorizedException({ message: "已登出" });
 	}
 }

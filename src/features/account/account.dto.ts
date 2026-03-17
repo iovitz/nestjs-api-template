@@ -2,6 +2,20 @@ import { IsEmail, IsString, Length } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { VerifyCodeDto } from "src/shared/dto/verify-code.dto";
 
+/**
+ * 账户信息返回类型（不包含敏感信息）
+ */
+export class AccountResponse {
+	@ApiProperty({ description: "账户ID" })
+	id: string;
+
+	@ApiProperty({ description: "用户昵称" })
+	name: string;
+
+	@ApiProperty({ description: "邮箱" })
+	email: string;
+}
+
 export class RegisterDto extends VerifyCodeDto {
 	@ApiProperty({
 		description: "用户名",
@@ -32,6 +46,14 @@ export class RegisterDto extends VerifyCodeDto {
 	@IsString()
 	@Length(6, 20)
 	password: string;
+}
+
+/**
+ * 退出登录返回类型
+ */
+export class LogoutResponse {
+	@ApiProperty({ description: "消息" })
+	message: string;
 }
 
 export class LoginDto extends VerifyCodeDto {
