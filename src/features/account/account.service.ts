@@ -27,7 +27,9 @@ export class AccountService {
 		// TODO 校验验证码
 
 		// 检查邮箱是否已存在
-		const existingAccount = await this.db.account.findUnique({ where: { email } });
+		const existingAccount = await this.db.account.findUnique({
+			where: { email },
+		});
 		if (existingAccount) {
 			throw new ConflictException("邮箱已被注册");
 		}
@@ -121,7 +123,13 @@ export class AccountService {
 	}
 
 	sanitizeAccountData(account: Account) {
-		return omit(account, ["password", "createdAt", "updatedAt", "lastLoginAt", "status"]);
+		return omit(account, [
+			"password",
+			"createdAt",
+			"updatedAt",
+			"lastLoginAt",
+			"status",
+		]);
 	}
 
 	/**
