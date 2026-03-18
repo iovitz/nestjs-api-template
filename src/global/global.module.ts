@@ -7,11 +7,11 @@ import { ThrottlerModule } from "@nestjs/throttler";
 import { LoggerModule, Params } from "nestjs-pino";
 import pino from "pino";
 import { CronjobService } from "./cronjob/cronjob.service";
-import { DbModule } from "./db/db.module";
 import { HttpContextService } from "./http-context/http-context.service";
 import { IdService } from "./id/id.service";
 import { RedisModule } from "./redis/redis.module";
 import { CryptoService } from "./crypto/crypto.service";
+import { DbService } from "./db/db.service";
 
 @Global()
 @Module({
@@ -30,7 +30,6 @@ import { CryptoService } from "./crypto/crypto.service";
 				},
 			],
 		}),
-		DbModule,
 		ScheduleModule.forRoot(),
 		RedisModule.forRootAsync({
 			useFactory: async (configService: ConfigService) => ({
@@ -113,9 +112,14 @@ import { CryptoService } from "./crypto/crypto.service";
 				],
 			}),
 		}),
-		DbModule,
 	],
-	providers: [IdService, CronjobService, HttpContextService, CryptoService],
-	exports: [IdService, HttpContextService, CryptoService],
+	providers: [
+		IdService,
+		CronjobService,
+		HttpContextService,
+		CryptoService,
+		DbService,
+	],
+	exports: [IdService, HttpContextService, CryptoService, DbService],
 })
 export class GlobalModule {}
