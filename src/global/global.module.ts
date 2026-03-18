@@ -4,7 +4,7 @@ import { Global, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ThrottlerModule } from "@nestjs/throttler";
-import { LoggerModule, Params } from "nestjs-pino";
+import { Logger, LoggerModule, Params } from "nestjs-pino";
 import pino from "pino";
 import { CronjobService } from "./cronjob/cronjob.service";
 import { HttpContextService } from "./http-context/http-context.service";
@@ -32,19 +32,16 @@ import { DbService } from "./db/db.service";
 		}),
 		ScheduleModule.forRoot(),
 		RedisModule.forRootAsync({
-			useFactory: async (configService: ConfigService) => ({
-				host: configService.get("REDIS_HOST", "127.0.0.1"),
-				port: configService.get("REDIS_PORT", 6379),
-				password: configService.get("REDIS_PASSWORD"),
-				db: configService.get("REDIS_DB", 0),
-				keyPrefix: configService.get("REDIS_KEY_PREFIX"),
-				enableOfflineQueue: configService.get(
-					"REDIS_ENABLE_OFFLINE_QUEUE",
-					true,
-				),
-				maxRetriesPerRequest: configService.get("REDIS_MAX_RETRIES", 3),
-			}),
-			inject: [ConfigService],
+			useFactory: async (configService: ConfigService, logger: Logger) => {
+				const url = configService.getOrThrow("REDIS_URL");
+				logger.log(`Redis URL: ${url}`);
+				return {
+					url,
+					enableOfflineQueue: true,
+					maxRetriesPerRequest: 3,
+				};
+			},
+			inject: [ConfigService, Logger],
 		}),
 		LoggerModule.forRootAsync({
 			inject: [ConfigService],
