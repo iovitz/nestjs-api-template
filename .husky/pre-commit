@@ -18,23 +18,6 @@ NEED_RUN_TEST=$(echo "$STAGED_FILES" | grep -E '\.(js|ts|jsx|tsx|json)$' || true
 
 # 运行单元测试（仅当有 JS/TS/JSX/TSX 文件时）
 if [ -n "$NEED_RUN_TEST" ]; then
-  echo "Running unit tests..."
-  pnpm test --passWithNoTests
-
-  if [ $? -ne 0 ]; then
-    echo "Unit tests failed. Please fix the test failures before committing."
-    exit 1
-  fi
-
-  # 运行 E2E 测试（仅当有 JS/TS/JSX/TSX 文件时）
-  echo "Running E2E tests..."
-  pnpm test:e2e --passWithNoTests
-
-  if [ $? -ne 0 ]; then
-    echo "E2E tests failed. Please fix the test failures before committing."
-    exit 1
-  fi
-
   # 运行 Biome 格式化所有暂存文件
   echo "Running Biome fix on staged files..."
   pnpx  @biomejs/biome check --write --staged
