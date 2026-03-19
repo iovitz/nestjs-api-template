@@ -1,12 +1,12 @@
 import { IsEnum, IsInt, Max, Min } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
-export enum VerifyType {
+export enum SecurityType {
 	Login = "login",
 	Register = "register",
 }
 
-export class CreateVerifyDto {
+export class CreateSecurityDto {
 	@ApiProperty({
 		description: "验证码宽度",
 		minimum: 80,
@@ -31,10 +31,10 @@ export class CreateVerifyDto {
 
 	@ApiProperty({
 		description: "验证码类型",
-		enum: VerifyType,
+		enum: SecurityType,
 	})
-	@IsEnum(VerifyType)
-	type: VerifyType;
+	@IsEnum(SecurityType)
+	type: SecurityType;
 
 	@ApiProperty({
 		description: "验证码字符长度",
@@ -48,7 +48,7 @@ export class CreateVerifyDto {
 	length: number = 4;
 }
 
-export class VerifyCodeDto {
+export class SecurityCodeDto {
 	@ApiProperty({ description: "验证码ID" })
 	id: string;
 
@@ -56,7 +56,7 @@ export class VerifyCodeDto {
 	svg: string;
 }
 
-export class ValidateVerifyDto {
+export class ValidateSecurityDto {
 	@ApiProperty({ description: "验证码ID" })
 	id: string;
 
@@ -65,8 +65,8 @@ export class ValidateVerifyDto {
 
 	@ApiProperty({
 		description: "验证码类型",
-		enum: VerifyType,
+		enum: SecurityType,
 	})
-	@IsEnum(VerifyType)
-	type: VerifyType;
+	@IsEnum(SecurityType)
+	type: SecurityType;
 }

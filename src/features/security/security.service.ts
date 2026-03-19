@@ -1,16 +1,22 @@
 import { Inject, Injectable } from "@nestjs/common";
 import Redis from "ioredis";
 import { REDIS_CLIENT } from "src/global/redis/redis.module";
-import { CreateVerifyDto, VerifyCodeDto, VerifyType } from "./verify.dto";
+import {
+	CreateSecurityDto,
+	SecurityCodeDto,
+	SecurityType,
+} from "./security.dto";
 
 @Injectable()
-export class VerifyService {
+export class SecurityService {
 	private readonly expireSeconds = 900; // 15分钟过期
 
 	constructor(@Inject(REDIS_CLIENT) private readonly redisClient: Redis) {}
 
-	async createVerify(createVerifyDto: CreateVerifyDto): Promise<VerifyCodeDto> {
-		const { width, height, type, length } = createVerifyDto;
+	async createSecurity(
+		createSecurityDto: CreateSecurityDto,
+	): Promise<SecurityCodeDto> {
+		const { width, height, type, length } = createSecurityDto;
 
 		// 生成随机验证码
 		const code = this.generateCode(length);
@@ -20,18 +26,18 @@ export class VerifyService {
 		const svg = this.generateSvg(code, width, height);
 
 		// 存储到Redis
-		const key = `verify:${type}:${id}`;
+		const key = `security:${type}:${id}`;
 		await this.redisClient.setex(key, this.expireSeconds, code);
 
 		return { id, svg };
 	}
 
-	async validateVerify(
+	async validateSecurity(
 		id: string,
 		code: string,
-		type: VerifyType,
+		type: SecurityType,
 	): Promise<boolean> {
-		const key = `verify:${type}:${id}`;
+		const key = `security:${type}:${id}`;
 		const storedCode = await this.redisClient.get(key);
 
 		if (!storedCode) {
