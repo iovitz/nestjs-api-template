@@ -7,7 +7,7 @@ services:
     labels:
       app: ${CURRENT_APP}
     ports:
-      - 0.0.0.0:16379:6379
+      - 0.0.0.0:60001:6379
     restart: always
     volumes:
       - /opt/${CURRENT_APP}/redis/data:/data
@@ -23,7 +23,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=simple_password
     ports:
-      - 0.0.0.0:15432:5432
+      - 0.0.0.0:60001:5432
     volumes:
       - /opt/${CURRENT_APP}/postgres:/var/lib/postgresql
     healthcheck:
