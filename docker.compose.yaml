@@ -1,7 +1,7 @@
 services:
   redis:
     # replace password with your own
-    command: redis-server /etc/redis/redis.conf --appendonly yes --requirepass "simple_password"
+    command: redis-server /etc/redis/redis.conf --appendonly yes --requirepass "${CURRENT_APP}.pass"
     container_name: ${CURRENT_APP}-redis
     image: redis:8.6.1
     labels:
@@ -21,7 +21,7 @@ services:
       app: ${CURRENT_APP}
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=simple_password
+      - POSTGRES_PASSWORD=${CURRENT_APP}.pass
     ports:
       - 0.0.0.0:60102:5432
     volumes:
