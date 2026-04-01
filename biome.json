@@ -10,8 +10,7 @@
 			"**",
 			"!!**/dist",
 			"!!**/migrations",
-			"!!**/coverage",
-			"!!.claude"
+			"!!**/coverage"
 		]
 	},
 	"formatter": {
