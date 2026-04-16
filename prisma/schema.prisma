@@ -12,21 +12,61 @@ datasource db {
   provider = "postgresql"
 }
 
-model Account {
-  // 主键（雪花ID）
-  id          String    @id
-  // 用户昵称
-  name        String    @db.VarChar(10)
-  // 邮件
-  email       String    @unique @db.VarChar(32)
-  // 密码
-  password    String    @db.VarChar(255)
-  // 状态：0（用户正常），1（未校验邮箱），2（账号被封禁）
-  status      Int       @default(0)
-  // 最后登录时间
-  lastLoginAt DateTime?
-  // 创建时间
-  createdAt   DateTime  @default(now())
-  // 更新时间
-  updatedAt   DateTime  @updatedAt
+// Better Auth Models
+model user {
+  id            String    @id
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Custom fields
+  password      String?   @db.VarChar(255)
+  status        Int       @default(0)
+  lastLoginAt   DateTime?
+
+  // Relations
+  sessions      session[]
+  accounts      account[]
+}
+
+model session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model account {
+  id                       String    @id
+  userId                   String
+  accountId                String
+  providerId               String
+  password                String?
+  accessToken              String?
+  refreshToken             String?
+  accessTokenExpiresAt     DateTime?
+  refreshTokenExpiresAt    DateTime?
+  scope                    String?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model verification {
+  id          String   @id
+  identifier  String
+  value       String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

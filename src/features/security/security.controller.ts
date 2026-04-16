@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
 import {
 	CreateSecurityDto,
 	ValidateSecurityDto,
@@ -9,6 +10,7 @@ import { SecurityService } from "./security.service";
 
 @ApiTags("安全")
 @Controller("api/security")
+@AllowAnonymous()
 export class SecurityController {
 	constructor(private readonly securityService: SecurityService) {}
 

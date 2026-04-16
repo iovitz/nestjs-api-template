@@ -5,6 +5,8 @@ import {
 	ValidationPipe,
 } from "@nestjs/common";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
+import { AuthModule } from "@thallesp/nestjs-better-auth";
+import { betterAuthInstance as auth } from "./auth";
 import { DefaultFilter } from "./aspects/filters/default/default.filter";
 import { HttpFilter } from "./aspects/filters/http/http.filter";
 import { ValidationFilter } from "./aspects/filters/validation/validation.filter";
@@ -14,7 +16,18 @@ import { FeaturesModule } from "./features/features.module";
 import { GlobalModule } from "./global/global.module";
 
 @Module({
-	imports: [GlobalModule, FeaturesModule],
+	imports: [
+		GlobalModule,
+		FeaturesModule,
+		AuthModule.forRoot({
+			auth,
+			bodyParser: {
+				json: { limit: "2mb" },
+				urlencoded: { limit: "2mb", extended: true },
+				rawBody: true,
+			},
+		}),
+	],
 
 	providers: [
 		// #region Interceptors

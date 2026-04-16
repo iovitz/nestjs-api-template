@@ -7,7 +7,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 export class DbService extends PrismaClient implements OnModuleInit {
 	private readonly logger = new Logger(DbService.name);
 
-	constructor(private readonly configService: ConfigService) {
+	constructor(readonly _configService: ConfigService) {
 		super({
 			adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
 			log: [

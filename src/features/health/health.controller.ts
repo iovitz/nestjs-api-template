@@ -8,10 +8,12 @@ import {
 	PrismaHealthIndicator,
 } from "@nestjs/terminus";
 import Redis from "ioredis";
+import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
 import { REDIS_CLIENT } from "src/global/redis/redis.module";
 import { DbService } from "src/global/db/db.service";
 
 @Controller("api/health")
+@AllowAnonymous()
 export class HealthController {
 	constructor(
 		private readonly health: HealthCheckService,

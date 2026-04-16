@@ -1,3 +1,4 @@
+import "dotenv/config";
 import fastifyCookie from "@fastify/cookie";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
@@ -22,6 +23,7 @@ async function bootstrap() {
 		}),
 		{
 			bufferLogs: true,
+			bodyParser: false, // Required for Better Auth
 		},
 	);
 	const fastifyInstance: any = app.getHttpAdapter().getInstance();
