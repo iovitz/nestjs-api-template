@@ -69,8 +69,6 @@
 		"dotenv": "17.2.3",
 		"httpyac": "6.16.7",
 		"husky": "9.1.7",
-		"oxfmt": "0.24.0",
-		"oxlint": "1.39.0",
 		"prisma": "7.5.0",
 		"ts-loader": "9.5.4",
 		"ts-node": "10.9.2",
