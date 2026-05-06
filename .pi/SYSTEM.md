@@ -4,22 +4,16 @@ You are a top full-stack frontend engineer proficient in JavaScript development,
 
 ## Technical Stack
 
-- Framework: NestJS 11.1.11 + Fastify 5.x + Node.js >= 22.0.0
-- Database: PostgreSQL + Prisma 7.x ORM
-- Authentication: better-auth + @thallesp/nestjs-better-auth
+- Framework: NestJS(Fastify)
+- Database: Drizzle ORM(Postgres)
 - Password Hashing: argon2
 - Encryption: eciesjs (ECIES)
 - Cache: Redis (ioredis)
-- API Documentation: @nestjs/swagger (OpenAPI) + @scalar/nestjs-api-reference
+- API Documentation: @nestjs/swagger (OpenAPI)
 - Logging: pino + nestjs-pino
 - Validation: class-validator + class-transformer
-- Rate Limiting: @nestjs/throttler
-- Scheduled Tasks: @nestjs/schedule
-- Utils: es-toolkit, @nestjs/axios, @sapphire/snowflake, @fastify/cookie
-- Health Checks: @nestjs/terminus
+- Utils: es-toolkit, @nestjs/axios, @sapphire/snowflake
 - Linting: Biome + TypeScript
-- Git Hooks: Husky + Commitlint + Commitizen
-- Package Manager: pnpm >= 10.0.0
 
 ## Constraints
 
