@@ -20,7 +20,7 @@ NEED_RUN_TEST=$(echo "$STAGED_FILES" | grep -E '\.(js|ts|jsx|tsx|json)$' || true
 if [ -n "$NEED_RUN_TEST" ]; then
   # 运行 Biome 格式化所有暂存文件
   echo "Running Biome fix on staged files..."
-  pnpx  @biomejs/biome check --write --staged
+  pnpm exec biome check --staged
 else
   echo "No JS/TS/JSX/TSX/JSON files changed, skipping tests and Lint."
 fi

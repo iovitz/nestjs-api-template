@@ -51,7 +51,7 @@ export class AccountController {
 		description: "登录成功，返回账户信息",
 		type: AccountResponse,
 	})
-	async login(@Body() body: LoginDto): Promise<AccountResponse> {
+	async login(@Body() body: LoginDto) {
 		const result = await this.accountService.login(body);
 
 		// 使用CookieService设置会话Cookie
@@ -66,9 +66,7 @@ export class AccountController {
 	@ApiOperation({ summary: "获取当前账户信息" })
 	@ApiResponse({ status: 200, description: "获取成功", type: AccountResponse })
 	@ApiResponse({ status: 401, description: "未授权" })
-	async getProfile(
-		@CurrentAccount() currentAccount: AuthedAccount,
-	): Promise<AccountResponse> {
+	async getProfile(@CurrentAccount() currentAccount: AuthedAccount) {
 		// 从Redis获取session数据
 		const sessionData = await this.accountService.getSessionData(
 			currentAccount.session,
@@ -87,9 +85,7 @@ export class AccountController {
 	@ApiBearerAuth()
 	@ApiOperation({ summary: "退出登录" })
 	@ApiResponse({ status: 401, description: "退出成功", type: LogoutResponse })
-	async logout(
-		@CurrentAccount() account: AuthedAccount,
-	): Promise<LogoutResponse> {
+	async logout(@CurrentAccount() account: AuthedAccount) {
 		// 调用service进行登出处理
 		await this.accountService.logout(account.session);
 
