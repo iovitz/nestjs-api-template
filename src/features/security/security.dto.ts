@@ -16,7 +16,7 @@ export class CreateSecurityDto {
 	@IsInt()
 	@Min(80)
 	@Max(300)
-	width: number = 120;
+	width!: number;
 
 	@ApiProperty({
 		description: "验证码高度",
@@ -27,14 +27,14 @@ export class CreateSecurityDto {
 	@IsInt()
 	@Min(30)
 	@Max(150)
-	height: number = 40;
+	height!: number;
 
 	@ApiProperty({
 		description: "验证码类型",
 		enum: SecurityType,
 	})
 	@IsEnum(SecurityType)
-	type: SecurityType;
+	type!: SecurityType;
 
 	@ApiProperty({
 		description: "验证码字符长度",
@@ -45,28 +45,28 @@ export class CreateSecurityDto {
 	@IsInt()
 	@Min(4)
 	@Max(6)
-	length: number = 4;
+	length!: number;
 }
 
 export class SecurityCodeDto {
 	@ApiProperty({ description: "验证码ID" })
-	id: string;
+	id!: string;
 
 	@ApiProperty({ description: "验证码SVG图片" })
-	svg: string;
+	svg!: string;
 }
 
 export class ValidateSecurityDto {
 	@ApiProperty({ description: "验证码ID" })
-	id: string;
+	id!: string;
 
 	@ApiProperty({ description: "用户输入的验证码" })
-	code: string;
+	code!: string;
 
 	@ApiProperty({
 		description: "验证码类型",
 		enum: SecurityType,
 	})
 	@IsEnum(SecurityType)
-	type: SecurityType;
+	type!: SecurityType;
 }

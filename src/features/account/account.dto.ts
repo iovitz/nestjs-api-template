@@ -7,13 +7,13 @@ import { VerifyCodeDto } from "src/shared/dto/verify-code.dto";
  */
 export class AccountResponse {
 	@ApiProperty({ description: "账户ID" })
-	id: string;
+	id!: string;
 
 	@ApiProperty({ description: "用户昵称" })
-	name: string;
+	name!: string;
 
 	@ApiProperty({ description: "邮箱" })
-	email: string;
+	email!: string;
 }
 
 export class RegisterDto extends VerifyCodeDto {
@@ -25,7 +25,7 @@ export class RegisterDto extends VerifyCodeDto {
 	})
 	@IsString()
 	@Length(2, 10)
-	name: string;
+	name!: string;
 
 	@ApiProperty({
 		description: "邮箱",
@@ -35,7 +35,7 @@ export class RegisterDto extends VerifyCodeDto {
 	})
 	@IsEmail()
 	@Length(4, 32)
-	email: string;
+	email!: string;
 
 	@ApiProperty({
 		description: "密码",
@@ -45,7 +45,7 @@ export class RegisterDto extends VerifyCodeDto {
 	})
 	@IsString()
 	@Length(6, 20)
-	password: string;
+	password!: string;
 }
 
 /**
@@ -53,7 +53,7 @@ export class RegisterDto extends VerifyCodeDto {
  */
 export class LogoutResponse {
 	@ApiProperty({ description: "消息" })
-	message: string;
+	message!: string;
 }
 
 export class LoginDto extends VerifyCodeDto {
@@ -65,7 +65,7 @@ export class LoginDto extends VerifyCodeDto {
 	})
 	@IsEmail()
 	@Length(4, 32)
-	email: string;
+	email!: string;
 
 	@ApiProperty({
 		description: "密码",
@@ -75,5 +75,5 @@ export class LoginDto extends VerifyCodeDto {
 	})
 	@IsString()
 	@Length(6, 20)
-	password: string;
+	password!: string;
 }
