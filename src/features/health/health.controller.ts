@@ -5,9 +5,9 @@ import {
 	HealthCheckResult,
 	HealthIndicatorService,
 	HealthIndicatorResult,
-	PrismaHealthIndicator,
 } from "@nestjs/terminus";
 import Redis from "ioredis";
+import { sql } from "drizzle-orm";
 import { REDIS_CLIENT } from "src/global/redis/redis.module";
 import { DbService } from "src/global/db/db.service";
 
@@ -16,9 +16,8 @@ export class HealthController {
 	constructor(
 		private readonly health: HealthCheckService,
 		private readonly healthIndicator: HealthIndicatorService,
-		private readonly prismaHealth: PrismaHealthIndicator,
-		@Inject(REDIS_CLIENT) private readonly redis: Redis,
 		private readonly db: DbService,
+		@Inject(REDIS_CLIENT) private readonly redis: Redis,
 	) {}
 
 	@Get()
@@ -26,7 +25,7 @@ export class HealthController {
 	async check(): Promise<HealthCheckResult> {
 		return this.health.check([
 			() => this.checkMemory(),
-			() => this.prismaHealth.pingCheck("database", this.db),
+			() => this.checkDatabase(),
 			() => this.checkRedis(),
 		]);
 	}
@@ -50,6 +49,24 @@ export class HealthController {
 				rssThreshold: `${Math.round(rssThreshold / 1024 / 1024)}MB`,
 			},
 		};
+	}
+
+	private async checkDatabase(): Promise<HealthIndicatorResult> {
+		try {
+			const result = await this.db.client.execute(sql`SELECT 1`);
+			if (result && (result as any).rowCount !== undefined) {
+				return this.healthIndicator
+					.check("database")
+					.up("Database is connected");
+			}
+			return this.healthIndicator
+				.check("database")
+				.down("Database query failed");
+		} catch (error) {
+			const message =
+				error instanceof Error ? error.message : "Database connection failed";
+			return this.healthIndicator.check("database").down(message);
+		}
 	}
 
 	private async checkRedis(): Promise<HealthIndicatorResult> {

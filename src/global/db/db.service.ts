@@ -1,28 +1,36 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import { PrismaClient } from "./prisma-client/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { ConfigService } from "@nestjs/config";
+import { drizzle } from "drizzle-orm/node-postgres";
+import pg from "pg";
+import * as schema from "./schema/account";
 
 @Injectable()
-export class DbService extends PrismaClient implements OnModuleInit {
+export class DbService implements OnModuleInit {
 	private readonly logger = new Logger(DbService.name);
+	private _client: ReturnType<typeof drizzle> | null = null;
 
-	constructor() {
-		super({
-			adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
-			log: [
-				{ emit: "event", level: "query" },
-				{ emit: "event", level: "info" },
-				{ emit: "event", level: "warn" },
-				{ emit: "event", level: "error" },
-			],
-		});
+	constructor(private readonly configService: ConfigService) {}
 
-		super.$on("info" as never, (e: any) => {
-			this.logger.verbose(e.query);
-		});
-	}
 	async onModuleInit() {
-		await this.$connect();
-		this.logger.log("Connected to database!!!");
+		const connectionString =
+			this.configService.getOrThrow<string>("DATABASE_URL");
+		const { Pool } = pg;
+		const pool = new Pool({
+			connectionString,
+			max: 10,
+			idleTimeoutMillis: 30000,
+			connectionTimeoutMillis: 2000,
+		});
+		this._client = drizzle(pool, { schema });
+		this.logger.log("Drizzle ORM initialized");
+	}
+
+	get client() {
+		if (!this._client) {
+			throw new Error("Database not initialized");
+		}
+		return this._client;
 	}
 }
+
+export { account, type Account, type NewAccount } from "./schema/account";

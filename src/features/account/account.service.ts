@@ -5,10 +5,11 @@ import {
 	NotFoundException,
 	UnauthorizedException,
 } from "@nestjs/common";
+import { eq } from "drizzle-orm";
 import { omit } from "es-toolkit";
 import Redis from "ioredis";
 import { DbService } from "src/global/db/db.service";
-import type { Account } from "src/global/db/prisma-client/client";
+import { account, type Account } from "src/global/db/schema/account";
 import { IdService } from "src/global/id/id.service";
 import { REDIS_CLIENT } from "src/global/redis/redis.module";
 import { LoginDto, RegisterDto } from "./account.dto";
@@ -27,10 +28,13 @@ export class AccountService {
 		// TODO 校验验证码
 
 		// 检查邮箱是否已存在
-		const existingAccount = await this.db.account.findUnique({
-			where: { email },
-		});
-		if (existingAccount) {
+		const existingAccount = await this.db.client
+			.select()
+			.from(account)
+			.where(eq(account.email, email))
+			.limit(1);
+
+		if (existingAccount.length > 0) {
 			throw new ConflictException("邮箱已被注册");
 		}
 
@@ -38,32 +42,38 @@ export class AccountService {
 		const hashedPassword = await this.cryptoService.hashPassword(password);
 
 		// 创建用户
-		const account = await this.db.account.create({
-			data: {
+		const [newAccount] = await this.db.client
+			.insert(account)
+			.values({
 				id: this.idService.genPrimaryKey(),
 				name,
 				email,
 				password: hashedPassword,
 				status: 0, // 正常状态
-			},
-		});
+			})
+			.returning();
 
 		// 返回用户信息（不包含密码）
-		return this.sanitizeAccountData(account);
+		return this.sanitizeAccountData(newAccount);
 	}
 
 	async login({ email, password }: LoginDto) {
 		// TODO 校验验证码
 
 		// 查找用户
-		const account = await this.db.account.findUnique({ where: { email } });
-		if (!account) {
+		const [accountData] = await this.db.client
+			.select()
+			.from(account)
+			.where(eq(account.email, email))
+			.limit(1);
+
+		if (!accountData) {
 			throw new UnauthorizedException("邮箱或密码错误");
 		}
 
 		// 验证密码
 		const isPasswordValid = await this.cryptoService.verifyPassword(
-			account.password,
+			accountData.password,
 			password,
 		);
 		if (!isPasswordValid) {
@@ -71,22 +81,22 @@ export class AccountService {
 		}
 
 		// 检查用户状态
-		if (account.status !== 0) {
+		if (accountData.status !== 0) {
 			throw new UnauthorizedException("账号状态异常");
 		}
 
 		// 更新最后登录时间
-		await this.db.account.update({
-			where: { id: account.id },
-			data: { lastLoginAt: new Date() },
-		});
+		await this.db.client
+			.update(account)
+			.set({ lastLoginAt: new Date() })
+			.where(eq(account.id, accountData.id));
 
 		// 生成session并写入Redis
 		const sessionId = this.generateSessionId();
 		const sessionData = {
-			id: account.id,
-			email: account.email,
-			name: account.name,
+			id: accountData.id,
+			email: accountData.email,
+			name: accountData.name,
 			loginAt: new Date().toISOString(),
 		};
 
@@ -99,31 +109,41 @@ export class AccountService {
 
 		// 返回用户数据和sessionId
 		return {
-			account: this.sanitizeAccountData(account),
+			account: this.sanitizeAccountData(accountData),
 			sessionId,
 		};
 	}
 
 	async findById(id: string) {
-		const account = await this.db.account.findUnique({ where: { id } });
-		if (!account) {
+		const [accountData] = await this.db.client
+			.select()
+			.from(account)
+			.where(eq(account.id, id))
+			.limit(1);
+
+		if (!accountData) {
 			throw new NotFoundException("用户不存在");
 		}
 
-		return this.sanitizeAccountData(account);
+		return this.sanitizeAccountData(accountData);
 	}
 
 	async findByEmail(email: string) {
-		const account = await this.db.account.findUnique({ where: { email } });
-		if (!account) {
+		const [accountData] = await this.db.client
+			.select()
+			.from(account)
+			.where(eq(account.email, email))
+			.limit(1);
+
+		if (!accountData) {
 			return null;
 		}
 
-		return this.sanitizeAccountData(account);
+		return this.sanitizeAccountData(accountData);
 	}
 
-	sanitizeAccountData(account: Account) {
-		return omit(account, [
+	sanitizeAccountData(accountData: Account) {
+		return omit(accountData, [
 			"password",
 			"createdAt",
 			"updatedAt",
