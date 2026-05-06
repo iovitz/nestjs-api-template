@@ -1,4 +1,4 @@
-import { Controller, Get, Inject } from "@nestjs/common";
+import { Controller, Get } from "@nestjs/common";
 import {
 	HealthCheck,
 	HealthCheckService,
@@ -6,8 +6,6 @@ import {
 	HealthIndicatorService,
 	HealthIndicatorResult,
 } from "@nestjs/terminus";
-import Redis from "ioredis";
-import { REDIS_CLIENT } from "src/global/redis/redis.module";
 import { DbService } from "src/global/db/db.service";
 
 @Controller("api/health")
@@ -16,7 +14,6 @@ export class HealthController {
 		private readonly health: HealthCheckService,
 		private readonly healthIndicator: HealthIndicatorService,
 		private readonly db: DbService,
-		@Inject(REDIS_CLIENT) private readonly redis: Redis,
 	) {}
 
 	@Get()
@@ -25,7 +22,7 @@ export class HealthController {
 		return this.health.check([
 			() => this.checkMemory(),
 			() => this.checkDatabase(),
-			() => this.checkRedis(),
+			() => this.checkCache(),
 		]);
 	}
 
@@ -53,7 +50,7 @@ export class HealthController {
 	private async checkDatabase(): Promise<HealthIndicatorResult> {
 		try {
 			const result = await this.db.client.raw("SELECT 1");
-			if (result && (result as any).rowCount !== undefined) {
+			if (result && (result as { rowCount?: number }).rowCount !== undefined) {
 				return this.healthIndicator
 					.check("database")
 					.up("Database is connected");
@@ -68,19 +65,23 @@ export class HealthController {
 		}
 	}
 
-	private async checkRedis(): Promise<HealthIndicatorResult> {
+	private async checkCache(): Promise<HealthIndicatorResult> {
 		try {
-			const result = await this.redis.ping();
-			const isHealthy = result === "PONG";
+			const result = await this.db.client.raw(
+				`SELECT EXISTS (
+					SELECT FROM information_schema.tables 
+					WHERE table_name = 'cache'
+				)`,
+			);
 
-			if (isHealthy) {
-				return this.healthIndicator.check("redis").up("Redis is connected");
+			if (result.rows?.[0]?.exists) {
+				return this.healthIndicator.check("cache").up("Cache is connected");
 			}
-			return this.healthIndicator.check("redis").down("Redis ping failed");
+			return this.healthIndicator.check("cache").down("Cache table not found");
 		} catch (error) {
 			const message =
-				error instanceof Error ? error.message : "Redis connection failed";
-			return this.healthIndicator.check("redis").down(message);
+				error instanceof Error ? error.message : "Cache connection failed";
+			return this.healthIndicator.check("cache").down(message);
 		}
 	}
 }

@@ -4,12 +4,12 @@ import { Global, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ThrottlerModule } from "@nestjs/throttler";
-import { Logger, LoggerModule, Params } from "nestjs-pino";
+import { LoggerModule, Params } from "nestjs-pino";
 import pino from "pino";
 import { CronjobService } from "./cronjob/cronjob.service";
 import { HttpContextService } from "./http-context/http-context.service";
 import { IdService } from "./id/id.service";
-import { RedisModule } from "./redis/redis.module";
+import { CacheModule } from "./cache/cache.module";
 import { CryptoService } from "./crypto/crypto.service";
 import { DbService } from "./db/db.service";
 
@@ -31,18 +31,7 @@ import { DbService } from "./db/db.service";
 			],
 		}),
 		ScheduleModule.forRoot(),
-		RedisModule.forRootAsync({
-			useFactory: async (configService: ConfigService, logger: Logger) => {
-				const url = configService.getOrThrow("REDIS_URL");
-				logger.log(`Redis URL: ${url}`);
-				return {
-					url,
-					enableOfflineQueue: true,
-					maxRetriesPerRequest: 3,
-				};
-			},
-			inject: [ConfigService, Logger],
-		}),
+		CacheModule,
 		LoggerModule.forRootAsync({
 			inject: [ConfigService],
 			useFactory: async (config: ConfigService) => {

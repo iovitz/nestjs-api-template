@@ -1,16 +1,14 @@
 import {
 	ConflictException,
-	Inject,
 	Injectable,
 	NotFoundException,
 	UnauthorizedException,
 } from "@nestjs/common";
 import { omit } from "es-toolkit";
-import Redis from "ioredis";
 import { DbService } from "src/global/db/db.service";
 import { Account } from "src/global/db/types/account";
 import { IdService } from "src/global/id/id.service";
-import { REDIS_CLIENT } from "src/global/redis/redis.module";
+import { CacheService } from "src/global/cache/cache.service";
 import { CryptoService } from "src/global/crypto/crypto.service";
 import { LoginDto, RegisterDto } from "./account.dto";
 
@@ -22,7 +20,7 @@ export class AccountService {
 		private readonly db: DbService,
 		private readonly cryptoService: CryptoService,
 		private readonly idService: IdService,
-		@Inject(REDIS_CLIENT) private readonly redisClient: Redis,
+		private readonly cacheService: CacheService,
 	) {}
 
 	async register({ name, email, password }: RegisterDto) {
@@ -87,7 +85,7 @@ export class AccountService {
 			last_login_at: new Date(),
 		});
 
-		// 生成session并写入Redis
+		// 生成session并写入Cache
 		const sessionId = this.generateSessionId();
 		const sessionData = {
 			id: accountData.id,
@@ -96,12 +94,8 @@ export class AccountService {
 			loginAt: new Date().toISOString(),
 		};
 
-		// 将session写入Redis，设置24小时过期时间
-		await this.redisClient.setex(
-			`session:${sessionId}`,
-			86400,
-			JSON.stringify(sessionData),
-		);
+		// 将session写入Cache，设置24小时过期时间
+		await this.cacheService.setex(`session:${sessionId}`, 86400, sessionData);
 
 		// 返回用户数据和sessionId
 		return {
@@ -147,14 +141,13 @@ export class AccountService {
 	 */
 	async getSessionData(sessionId: string) {
 		const key = `session:${sessionId}`;
-		const data = await this.redisClient.get(key);
-		if (!data) return null;
-
-		try {
-			return JSON.parse(data);
-		} catch {
-			return null;
-		}
+		const data = await this.cacheService.get<{
+			id: string;
+			email: string;
+			name: string;
+			loginAt: string;
+		}>(key);
+		return data;
 	}
 
 	/**
@@ -163,8 +156,8 @@ export class AccountService {
 	async logout(sessionId: string) {
 		const key = `session:${sessionId}`;
 
-		// 删除Redis中的session数据
-		await this.redisClient.del(key);
+		// 删除Cache中的session数据
+		await this.cacheService.del(key);
 
 		return true;
 	}

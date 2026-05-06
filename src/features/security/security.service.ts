@@ -1,6 +1,5 @@
-import { Inject, Injectable } from "@nestjs/common";
-import Redis from "ioredis";
-import { REDIS_CLIENT } from "src/global/redis/redis.module";
+import { Injectable } from "@nestjs/common";
+import { CacheService } from "src/global/cache/cache.service";
 import {
 	CreateSecurityDto,
 	SecurityCodeDto,
@@ -11,7 +10,7 @@ import {
 export class SecurityService {
 	private readonly expireSeconds = 900; // 15分钟过期
 
-	constructor(@Inject(REDIS_CLIENT) private readonly redisClient: Redis) {}
+	constructor(private readonly cacheService: CacheService) {}
 
 	async createSecurity(
 		createSecurityDto: CreateSecurityDto,
@@ -25,9 +24,9 @@ export class SecurityService {
 		// 生成SVG图片
 		const svg = this.generateSvg(code, width, height);
 
-		// 存储到Redis
+		// 存储到Cache
 		const key = `security:${type}:${id}`;
-		await this.redisClient.setex(key, this.expireSeconds, code);
+		await this.cacheService.setex(key, this.expireSeconds, code);
 
 		return { id, svg };
 	}
@@ -38,14 +37,14 @@ export class SecurityService {
 		type: SecurityType,
 	): Promise<boolean> {
 		const key = `security:${type}:${id}`;
-		const storedCode = await this.redisClient.get(key);
+		const storedCode = await this.cacheService.get<string>(key);
 
 		if (!storedCode) {
 			return false;
 		}
 
 		// 验证成功后删除验证码
-		await this.redisClient.del(key);
+		await this.cacheService.del(key);
 
 		// 不区分大小写比较
 		return storedCode.toLowerCase() === code.toLowerCase();

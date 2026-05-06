@@ -67,7 +67,7 @@ export class AccountController {
 	@ApiResponse({ status: 200, description: "获取成功", type: AccountResponse })
 	@ApiResponse({ status: 401, description: "未授权" })
 	async getProfile(@CurrentAccount() currentAccount: AuthedAccount) {
-		// 从Redis获取session数据
+		// 从Cache获取session数据
 		const sessionData = await this.accountService.getSessionData(
 			currentAccount.session,
 		);

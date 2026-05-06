@@ -1,18 +1,16 @@
 import {
 	CanActivate,
 	ExecutionContext,
-	Inject,
 	Injectable,
 	UnauthorizedException,
 } from "@nestjs/common";
-import Redis from "ioredis";
 import { HttpContextService } from "src/global/http-context/http-context.service";
-import { REDIS_CLIENT } from "src/global/redis/redis.module";
+import { CacheService } from "src/global/cache/cache.service";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 	constructor(
-		@Inject(REDIS_CLIENT) private readonly redisClient: Redis,
+		private readonly cacheService: CacheService,
 		private readonly httpContextService: HttpContextService,
 	) {}
 
@@ -24,30 +22,30 @@ export class AuthGuard implements CanActivate {
 			throw new UnauthorizedException("请先登录");
 		}
 
-		// 从Redis获取session数据
+		// 从Cache获取session数据
 		const key = `session:${sessionId}`;
-		const sessionData = await this.redisClient.get(key);
+		const sessionData = await this.cacheService.get<{
+			id: string;
+			email?: string;
+			name?: string;
+			loginAt?: string;
+		}>(key);
 
 		if (!sessionData) {
 			this.httpContextService.clearCookie("session");
 			throw new UnauthorizedException("会话已过期，请重新登录");
 		}
 
-		try {
-			const session = JSON.parse(sessionData);
-			if (!session.id) {
-				throw new UnauthorizedException("会话数据无效");
-			}
-
-			// 将用户信息附加到请求对象上，供后续使用
-			request.account = {
-				id: session.id,
-				session: sessionId,
-			};
-
-			return true;
-		} catch {
-			throw new UnauthorizedException("会话数据格式错误");
+		if (!sessionData.id) {
+			throw new UnauthorizedException("会话数据无效");
 		}
+
+		// 将用户信息附加到请求对象上，供后续使用
+		request.account = {
+			id: sessionData.id,
+			session: sessionId,
+		};
+
+		return true;
 	}
 }
