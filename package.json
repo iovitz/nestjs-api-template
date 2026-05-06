@@ -17,11 +17,7 @@
 		"yac": "npx httpyac ./api-test.http",
 		"prepare": "husky",
 		"cz": "cz",
-		"check-versions": "node scripts/check-versions.js",
-		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate",
-		"db:push": "drizzle-kit push",
-		"db:studio": "drizzle-kit studio"
+		"check-versions": "node scripts/check-versions.js"
 	},
 	"dependencies": {
 		"@fastify/cookie": "11.0.2",
@@ -39,11 +35,11 @@
 		"argon2": "0.44.0",
 		"class-transformer": "0.5.1",
 		"class-validator": "0.14.3",
-		"drizzle-orm": "0.45.2",
 		"eciesjs": "0.4.17",
 		"es-toolkit": "1.43.0",
 		"fastify": "5.6.2",
 		"ioredis": "5.9.1",
+		"knex": "3.2.10",
 		"nestjs-pino": "4.5.0",
 		"pg": "8.20.0",
 		"pino": "10.2.0",
@@ -68,7 +64,6 @@
 		"commitizen": "4.3.1",
 		"cz-conventional-changelog": "3.3.0",
 		"dotenv": "17.2.3",
-		"drizzle-kit": "0.31.10",
 		"httpyac": "6.16.7",
 		"husky": "9.1.7",
 		"ts-loader": "9.5.4",

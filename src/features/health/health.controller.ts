@@ -7,7 +7,6 @@ import {
 	HealthIndicatorResult,
 } from "@nestjs/terminus";
 import Redis from "ioredis";
-import { sql } from "drizzle-orm";
 import { REDIS_CLIENT } from "src/global/redis/redis.module";
 import { DbService } from "src/global/db/db.service";
 
@@ -53,7 +52,7 @@ export class HealthController {
 
 	private async checkDatabase(): Promise<HealthIndicatorResult> {
 		try {
-			const result = await this.db.client.execute(sql`SELECT 1`);
+			const result = await this.db.client.raw("SELECT 1");
 			if (result && (result as any).rowCount !== undefined) {
 				return this.healthIndicator
 					.check("database")

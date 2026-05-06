@@ -1,28 +1,40 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import {
+	Injectable,
+	Logger,
+	OnModuleDestroy,
+	OnModuleInit,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { drizzle } from "drizzle-orm/node-postgres";
-import pg from "pg";
-import * as schema from "./schema/account";
+import Knex, { Knex as KnexInstance } from "knex";
 
 @Injectable()
-export class DbService implements OnModuleInit {
+export class DbService implements OnModuleInit, OnModuleDestroy {
 	private readonly logger = new Logger(DbService.name);
-	private _client: ReturnType<typeof drizzle> | null = null;
+	private _client: KnexInstance | null = null;
 
 	constructor(private readonly configService: ConfigService) {}
 
 	async onModuleInit() {
 		const connectionString =
 			this.configService.getOrThrow<string>("DATABASE_URL");
-		const { Pool } = pg;
-		const pool = new Pool({
-			connectionString,
-			max: 10,
-			idleTimeoutMillis: 30000,
-			connectionTimeoutMillis: 2000,
+		this._client = Knex({
+			client: "pg",
+			connection: connectionString,
+			pool: {
+				min: 0,
+				max: 10,
+				idleTimeoutMillis: 30000,
+				acquireTimeoutMillis: 2000,
+			},
 		});
-		this._client = drizzle(pool, { schema });
-		this.logger.log("Drizzle ORM initialized");
+		this.logger.log("Knex initialized");
+	}
+
+	async onModuleDestroy() {
+		if (this._client) {
+			await this._client.destroy();
+			this.logger.log("Knex destroyed");
+		}
 	}
 
 	get client() {
@@ -32,5 +44,3 @@ export class DbService implements OnModuleInit {
 		return this._client;
 	}
 }
-
-export { account, type Account, type NewAccount } from "./schema/account";
