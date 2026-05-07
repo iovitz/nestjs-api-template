@@ -40,9 +40,17 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 					.whereNull("expires_at")
 					.orWhere("expires_at", ">", new Date());
 			})
-			.first<{ value: T }>();
+			.first<{ value: string }>();
 
-		return result?.value ?? null;
+		if (!result) {
+			return null;
+		}
+
+		try {
+			return JSON.parse(result.value) as T;
+		} catch {
+			return result.value as T;
+		}
 	}
 
 	/**
@@ -61,7 +69,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 			.table(this.tableName)
 			.insert({
 				key,
-				value,
+				value: JSON.stringify(value),
 				expires_at: expiresAt,
 			})
 			.onConflict("key")
