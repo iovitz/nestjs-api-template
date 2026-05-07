@@ -12,12 +12,12 @@ const commonConfig: Knex.Config = {
 		acquireTimeoutMillis: 2000,
 	},
 	migrations: {
-		directory: "./src/global/db/knex-migrations",
+		directory: "./src/global/db/migrations",
 		extension: "ts",
 		tableName: "knex_migrations",
 	},
 	seeds: {
-		directory: "./src/global/db/knex-seeds",
+		directory: "./src/global/db/seeds",
 		extension: "ts",
 	},
 };
