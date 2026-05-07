@@ -7,7 +7,7 @@ const commonConfig: Knex.Config = {
 	client: "pg",
 	pool: {
 		min: 0,
-		max: 10,
+		max: 30,
 		idleTimeoutMillis: 30000,
 		acquireTimeoutMillis: 2000,
 	},

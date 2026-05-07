@@ -20,7 +20,6 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 	constructor(private readonly dbService: DbService) {}
 
 	async onModuleInit() {
-		await this.ensureTableExists();
 		this.startCleanupTimer();
 		this.logger.log(`CacheService initialized with table: ${this.tableName}`);
 	}
@@ -133,36 +132,6 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 		}
 
 		return result ?? 0;
-	}
-
-	private async ensureTableExists(): Promise<void> {
-		const exists = await this.dbService.client.raw(
-			`SELECT EXISTS (
-				SELECT FROM information_schema.tables 
-				WHERE table_name = '${this.tableName}'
-			)`,
-		);
-
-		if (!exists.rows?.[0]?.exists) {
-			await this.dbService.client.raw(`
-				CREATE UNLOGGED TABLE IF NOT EXISTS ${this.tableName} (
-					key TEXT PRIMARY KEY,
-					value JSONB NOT NULL,
-					expires_at TIMESTAMPTZ DEFAULT NULL
-				)
-			`);
-
-			await this.dbService.client.raw(`
-				CREATE INDEX IF NOT EXISTS idx_${this.tableName}_expires 
-				ON ${this.tableName} (expires_at) WHERE expires_at IS NOT NULL
-			`);
-
-			this.logger.log(`Created UNLOGGED table: ${this.tableName}`);
-		} else {
-			await this.dbService.client.raw(
-				`ALTER TABLE ${this.tableName} SET UNLOGGED`,
-			);
-		}
 	}
 
 	private startCleanupTimer(): void {
