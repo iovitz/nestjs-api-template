@@ -9,6 +9,7 @@
 		"build": "nest build",
 		"start": "nest start",
 		"dev": "nest start --watch",
+		"dev:ai": "rm -f ai_debug.log && nest start --watch 2>&1 | tee ai_debug.log",
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
 		"check": "pnpm exec tsc --noEmit && pnpm exec biome check",
