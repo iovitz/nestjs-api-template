@@ -117,9 +117,6 @@ importers:
       '@swc/core':
         specifier: 1.15.8
         version: 1.15.8
-      '@types/knex':
-        specifier: 0.16.1
-        version: 0.16.1(pg@8.20.0)
       '@types/node':
         specifier: 25.0.8
         version: 25.0.8
@@ -1210,10 +1207,6 @@ packages:
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
-
-  '@types/knex@0.16.1':
-    resolution: {integrity: sha512-54gWD1HWwdVx5iLHaJ1qxH3I6KyBsj5fFqzRpXFn7REWiEB2jwspeVCombNsocSrqPd7IRPqKrsIME7/cD+TFQ==}
-    deprecated: This is a stub types definition. knex provides its own type definitions, so you do not need this installed.
 
   '@types/lodash@4.17.23':
     resolution: {integrity: sha512-RDvF6wTulMPjrNdCoYRC8gNR880JNGT8uB+REUpC2Ns4pRqQJhGz90wh7rgdXDPpCczF3VGktDuFGVnz8zP7HA==}
@@ -4906,20 +4899,6 @@ snapshots:
   '@types/keyv@3.1.4':
     dependencies:
       '@types/node': 25.0.8
-
-  '@types/knex@0.16.1(pg@8.20.0)':
-    dependencies:
-      knex: 3.2.10(pg@8.20.0)
-    transitivePeerDependencies:
-      - better-sqlite3
-      - mysql
-      - mysql2
-      - pg
-      - pg-native
-      - pg-query-stream
-      - sqlite3
-      - supports-color
-      - tedious
 
   '@types/lodash@4.17.23': {}
 
