@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { CacheService } from "src/global/cache/cache.service";
 import {
 	CreateSecurityDto,
@@ -9,6 +9,7 @@ import {
 @Injectable()
 export class SecurityService {
 	private readonly expireSeconds = 900; // 15分钟过期
+	private readonly logger = new Logger(SecurityService.name);
 
 	constructor(private readonly cacheService: CacheService) {}
 
@@ -28,6 +29,8 @@ export class SecurityService {
 		const key = `security:${type}:${id}`;
 		await this.cacheService.setex(key, this.expireSeconds, code);
 
+		this.logger.log({ id, type, length }, "Security code created");
+
 		return { id, svg };
 	}
 
@@ -40,11 +43,17 @@ export class SecurityService {
 		const storedCode = await this.cacheService.get<string>(key);
 
 		if (!storedCode) {
+			this.logger.warn(
+				{ id, type },
+				"Security code validation failed: code not found or expired",
+			);
 			return false;
 		}
 
 		// 验证成功后删除验证码
 		await this.cacheService.del(key);
+
+		this.logger.log({ id, type }, "Security code validated successfully");
 
 		// 不区分大小写比较
 		return storedCode.toLowerCase() === code.toLowerCase();

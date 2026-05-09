@@ -1,6 +1,7 @@
 import {
 	ConflictException,
 	Injectable,
+	Logger,
 	NotFoundException,
 	UnauthorizedException,
 } from "@nestjs/common";
@@ -15,6 +16,7 @@ import { LoginDto, RegisterDto } from "./account.dto";
 @Injectable()
 export class AccountService {
 	private readonly tableName = "account";
+	private readonly logger = new Logger(AccountService.name);
 
 	constructor(
 		private readonly db: DbService,
@@ -31,13 +33,13 @@ export class AccountService {
 		const existingAccount = await table.where("email", email).first();
 
 		if (existingAccount) {
+			this.logger.warn({ email }, "Registration failed: email already exists");
 			throw new ConflictException("邮箱已被注册");
 		}
 
 		// 加密密码
 		const hashedPassword = await this.cryptoService.hashPassword(password);
 
-		// 创建用户
 		const now = new Date();
 		const [newAccount] = await table
 			.insert({
@@ -45,13 +47,17 @@ export class AccountService {
 				name,
 				email,
 				password: hashedPassword,
-				status: 0, // 正常状态
+				status: 0,
 				created_at: now,
 				updated_at: now,
 			})
 			.returning("*");
 
-		// 返回用户信息（不包含密码）
+		this.logger.log(
+			{ userId: newAccount.id, email },
+			"User registered successfully",
+		);
+
 		return this.sanitizeAccountData(newAccount);
 	}
 
@@ -63,6 +69,7 @@ export class AccountService {
 		const accountData = await table.where("email", email).first();
 
 		if (!accountData) {
+			this.logger.warn({ email, reason: "account_not_found" }, "Login failed");
 			throw new UnauthorizedException("邮箱或密码错误");
 		}
 
@@ -72,11 +79,16 @@ export class AccountService {
 			password,
 		);
 		if (!isPasswordValid) {
+			this.logger.warn({ email, reason: "invalid_password" }, "Login failed");
 			throw new UnauthorizedException("邮箱或密码错误");
 		}
 
 		// 检查用户状态
 		if (accountData.status !== 0) {
+			this.logger.warn(
+				{ userId: accountData.id, status: accountData.status },
+				"Login failed: account status abnormal",
+			);
 			throw new UnauthorizedException("账号状态异常");
 		}
 
@@ -96,6 +108,11 @@ export class AccountService {
 
 		// 将session写入Cache，设置24小时过期时间
 		await this.cacheService.setex(`session:${sessionId}`, 86400, sessionData);
+
+		this.logger.log(
+			{ userId: accountData.id, sessionId },
+			"User login successful",
+		);
 
 		// 返回用户数据和sessionId
 		return {
@@ -136,9 +153,6 @@ export class AccountService {
 		]);
 	}
 
-	/**
-	 * 获取session数据
-	 */
 	async getSessionData(sessionId: string) {
 		const key = `session:${sessionId}`;
 		const data = await this.cacheService.get<{
@@ -147,17 +161,21 @@ export class AccountService {
 			name: string;
 			loginAt: string;
 		}>(key);
+
+		if (!data) {
+			this.logger.debug({ sessionId }, "Session not found or expired");
+		}
+
 		return data;
 	}
 
-	/**
-	 * 用户登出
-	 */
 	async logout(sessionId: string) {
 		const key = `session:${sessionId}`;
 
 		// 删除Cache中的session数据
 		await this.cacheService.del(key);
+
+		this.logger.log({ sessionId }, "User logout successful");
 
 		return true;
 	}

@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, Logger } from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import argon2 from "argon2";
 import { encrypt, decrypt } from "eciesjs";

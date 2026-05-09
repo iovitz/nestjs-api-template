@@ -41,13 +41,13 @@ import { DbService } from "./db/db.service";
 							return {
 								msg: "request in",
 								path: req.url,
-								mathod: req.method,
+								method: req.method,
 							};
 						},
 						customSuccessObject(req, res, val) {
 							return {
 								path: req.url,
-								mathod: req.method,
+								method: req.method,
 								status: res.statusCode,
 								cost: val.responseTime,
 							};
@@ -55,7 +55,7 @@ import { DbService } from "./db/db.service";
 						customErrorObject(req, res, _error, val) {
 							return {
 								path: req.url,
-								mathod: req.method,
+								method: req.method,
 								status: res.statusCode,
 								cost: val.responseTime,
 							};
