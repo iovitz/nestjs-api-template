@@ -34,7 +34,7 @@ export class DefaultFilter<T extends Error> implements ExceptionFilter {
 
 		// 开发环境下返回原始错误信息
 		if (isDevelop) {
-			response["originalError"] = {
+			response.originalError = {
 				name: exception.name,
 				message: exception.message,
 				stack: exception.stack,
