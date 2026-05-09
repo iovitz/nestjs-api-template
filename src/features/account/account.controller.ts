@@ -5,7 +5,6 @@ import {
 	HttpCode,
 	HttpStatus,
 	Post,
-	UnauthorizedException,
 	UseGuards,
 } from "@nestjs/common";
 import {
@@ -84,7 +83,7 @@ export class AccountController {
 	@UseGuards(AuthGuard)
 	@ApiBearerAuth()
 	@ApiOperation({ summary: "退出登录" })
-	@ApiResponse({ status: 401, description: "退出成功", type: LogoutResponse })
+	@ApiResponse({ status: 200, description: "退出成功", type: LogoutResponse })
 	async logout(@CurrentAccount() account: AuthedAccount) {
 		// 调用service进行登出处理
 		await this.accountService.logout(account.session);
@@ -92,6 +91,6 @@ export class AccountController {
 		// 清除Cookie
 		this.httpContextService.clearCookie("session");
 
-		throw new UnauthorizedException({ message: "已登出" });
+		return { message: "已登出" };
 	}
 }

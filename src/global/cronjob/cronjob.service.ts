@@ -33,6 +33,7 @@ export class CronjobService {
 	 */
 	@Cron("*/60 * * * *")
 	async logRotating() {
-		// ...
+		this.logger.log("Starting log rotation check");
+		// TODO: 实现日志轮转逻辑
 	}
 }

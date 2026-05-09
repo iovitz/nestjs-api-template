@@ -35,11 +35,9 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 		const result = await this.dbService.client
 			.table(this.tableName)
 			.where("key", key)
-			.where((builder) => {
-				void builder
-					.whereNull("expires_at")
-					.orWhere("expires_at", ">", new Date());
-			})
+			.where((builder) =>
+				builder.whereNull("expires_at").orWhere("expires_at", ">", new Date()),
+			)
 			.first<{ value: string }>();
 
 		if (!result) {
@@ -116,11 +114,9 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 		const result = await this.dbService.client
 			.table(this.tableName)
 			.where("key", key)
-			.where((builder) => {
-				void builder
-					.whereNull("expires_at")
-					.orWhere("expires_at", ">", new Date());
-			})
+			.where((builder) =>
+				builder.whereNull("expires_at").orWhere("expires_at", ">", new Date()),
+			)
 			.first();
 
 		return !!result;

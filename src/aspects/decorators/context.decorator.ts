@@ -4,7 +4,7 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 
-// 获取用户IP
+// 获取当前登录账户信息
 export const CurrentAccount = createParamDecorator(
 	(_: unknown, ctx: ExecutionContext) => {
 		const req = ctx.switchToHttp().getRequest<FastifyRequest>();
@@ -22,8 +22,7 @@ export const ClientIP = createParamDecorator(
 		const req = ctx.switchToHttp().getRequest<FastifyRequest>();
 
 		const ip =
-			req.cookies.session ??
-			req.cookies["client-id"] ??
+			req.cookies?.["client-id"] ??
 			req.ip ??
 			req.socket?.remoteAddress ??
 			req.headers["x-forwarded-for"];
