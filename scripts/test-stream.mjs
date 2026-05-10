@@ -1,39 +1,36 @@
 import http from "node:http";
 
-const STREAM_URL = "http://localhost:9876/api/samples/stream";
-const COUNT = 5;
+const TYPE = process.argv[2] || "sse";
+const COUNT = process.argv[3] || "5";
+const URL = `http://localhost:9876/api/samples/${TYPE}?count=${COUNT}`;
 
-const startTime = Date.now();
-let lineCount = 0;
-let buffer = "";
+const t = Date.now();
+let n = 0,
+	buf = "";
 
-console.log(`测试: ${STREAM_URL}?count=${COUNT}\n`);
+console.log(`${TYPE.toUpperCase()}: ${URL}\n`);
 
-const req = http.request(new URL(`${STREAM_URL}?count=${COUNT}`), (res) => {
-	console.log(`状态: ${res.statusCode}`);
-	console.log(`类型: ${res.headers["content-type"]}`);
-
-	res.on("data", (chunk) => {
-		buffer += chunk.toString();
-		const lines = buffer.split("\n");
-		buffer = lines.pop() || "";
-
-		for (const line of lines) {
-			if (line.trim()) {
-				lineCount++;
-				console.log(`[${lineCount}] [${Date.now() - startTime}ms] ${line}`);
+http
+	.get(URL, (r) => {
+		console.log(`状态: ${r.statusCode} 类型: ${r.headers["content-type"]}`);
+		r.on("data", (c) => {
+			buf += c;
+			const lines = buf.split("\n");
+			for (const l of lines.slice(0, -1)) {
+				if (l) {
+					// 关键区分点
+					if (TYPE === "sse") {
+						if (l.startsWith("data:")) console.log(`[${++n}] ${l}`);
+					} else {
+						console.log(`[${++n}] [${Date.now() - t}ms] ${l}`);
+					}
+				}
 			}
-		}
+			buf = lines.pop() || "";
+		});
+		r.on("end", () => console.log(`\n${n} 条，${Date.now() - t}ms`));
+	})
+	.on("error", (e) => {
+		console.error(e);
+		process.exit(1);
 	});
-
-	res.on("end", () => {
-		console.log(`\n共 ${lineCount} 条，耗时 ${Date.now() - startTime}ms`);
-	});
-});
-
-req.on("error", (e) => {
-	console.error(e);
-	process.exit(1);
-});
-
-req.end();
